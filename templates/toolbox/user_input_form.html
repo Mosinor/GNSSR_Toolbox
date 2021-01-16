@@ -7,9 +7,9 @@
 
     <div>
         <p>
-            <h4>Grid area:</h4>
+            <h4>Selection Area:</h4>
             <br>
-                    {{ form.grid }}
+                {{ form.grid }}
             {% for error in form.grid.errors %}
                 <p style="color: red">{{ error }}</p>
             {% endfor %}
@@ -17,17 +17,17 @@
     </div>
 
     <p>Selected coordinates:</p>
-    <label for="coordinate_a">Your name: </label>
-    <input readonly id="coordinate_a" type="text" name="coordinate_a" value="33, -71">
+    <label for="coordinate_a">Top Left: </label>
+    <input id="coordinate_a" type="text" name="coordinate_a" value="33, -71">
 
-    <label for="coordinate_b">Your name: </label>
-    <input readonly id="coordinate_b" type="text" name="coordinate_b" value="33, -72">
+    <label for="coordinate_b">Bottom Right: </label>
+    <input id="coordinate_b" type="text" name="coordinate_b" value="33, -72">
 
     <hr>
 
     <div class='input-group date' id='datetimepicker6'>
         <p>
-            <h4>Start date and time:</h4>
+            <h4>Start date:</h4>
             <br>
             {{ form.start_time }}
             {% if form.start_time.help_text %}
@@ -41,7 +41,7 @@
 
     <div class="field_div">
         <p>
-            <h4>End date and time:</h4>
+            <h4>End date:</h4>
             <br>
             {{ form.end_time }}
             {% if form.end_time.help_text %}
