@@ -23,5 +23,8 @@ urlpatterns = [
     # Staticpages
     url(r'^$', views.home, name='home'),
 
+    # Toolbox
+    url(r'^toolbox/', include('apps.toolbox.urls'), name='toolbox'),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

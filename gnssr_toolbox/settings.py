@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'apps.staticpages',
+    'apps.toolbox',
 ]
 
 MIDDLEWARE = [
