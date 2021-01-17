@@ -1,27 +1,26 @@
 {% load leaflet_tags %}
+{% leaflet_js plugins="forms" %}
+{% leaflet_css plugins="forms" %}
 <form method="post" novalidate>
     {{ form.media }}
     {% csrf_token %}
-
     <hr>
 
     <div>
-        <p>
-            <h4>Selection Area:</h4>
-            <br>
-                {{ form.grid }}
-            {% for error in form.grid.errors %}
-                <p style="color: red">{{ error }}</p>
-            {% endfor %}
-        </p>
+        <h4>Selection Area:</h4>
+        <br>
+        {{ form.grid }}
+        {% for error in form.grid.errors %}
+            <p style="color: #ff0000">{{ error }}</p>
+        {% endfor %}
     </div>
 
     <p>Selected coordinates:</p>
     <label for="coordinate_a">Top Left: </label>
-    <input id="coordinate_a" type="text" name="coordinate_a" value="33, -71">
+    <input id="coordinate_a" type="text" name="coordinate_a">
 
     <label for="coordinate_b">Bottom Right: </label>
-    <input id="coordinate_b" type="text" name="coordinate_b" value="33, -72">
+    <input id="coordinate_b" type="text" name="coordinate_b">
 
     <hr>
 
@@ -70,17 +69,17 @@
 			var coord = String(markerA.getLatLng()).split(',');
 			var lat = coord[0].split('(');
 			var lng = coord[1].split(')');
-			document.getElementById("coordinate_a").value = ""+lat[1]+", "+lng[0]+"";
+			document.getElementById("coordinate_a").value = ""+lat[1]+","+lng[0]+"";
 			CreateRectangle();
 		});
 
-       var markerB = L.marker([27, -60], {title: "Point B", draggable: true})
-		.addTo(map)
-		.on('dragend', function() {
-			var coord = String(markerB.getLatLng()).split(',');
+        var markerB = L.marker([27, -60], {title: "Point B", draggable: true})
+        .addTo(map)
+        .on('dragend', function() {
+            var coord = String(markerB.getLatLng()).split(',');
 			var lat = coord[0].split('(');
 			var lng = coord[1].split(')');
-			document.getElementById("coordinate_b").value = ""+lat[1]+", "+lng[0]+"";
+			document.getElementById("coordinate_b").value = ""+lat[1]+","+lng[0]+"";
             CreateRectangle();
 		});
 

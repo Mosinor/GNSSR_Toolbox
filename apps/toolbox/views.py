@@ -9,10 +9,7 @@ def user_input(request):
         if form.is_valid():
             start = form.cleaned_data['start_time']
             end = form.cleaned_data['end_time']
-            print(start)
-            print(end)
 
-        print("Submit")
     else:
         form = UserInputForm()
 
