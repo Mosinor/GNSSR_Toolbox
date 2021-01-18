@@ -1,6 +1,6 @@
 # GNSSR-Toolbox
 
-This is a school project, where the task is to make a representation of a GIS. I chose to make a web application in the React.js framework.
+The GNSSR-Toolbox is a prototype tool for the collection and processing of Global Navigation Sattelite System Reflectometry data. This website was created in accordance with a master thesis at the Norwegian university NTNU. 
 
 ## Getting Started
 
