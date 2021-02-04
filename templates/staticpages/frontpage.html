@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}0
 {% load static %}
 {% block title %}Home{% endblock title %}
 {% block content %}
@@ -11,7 +11,16 @@
                 at the Norwegian university NTNU.
             </p>
 
-            <a class="btn btn-primary" href="{% url 'toolbox:user_input' %}">Go to Toolbox</a>
+
+            <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Select Tool:
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'toolbox:user_input' %}">Example 1</a>
+                <a class="dropdown-item" href="{% url 'toolbox:tool_selection' %}">Example 2</a>
+                <a class="dropdown-item" href="{% url 'toolbox:example' %}">Example 3</a>
+            </div>
+
         </div>
     </div> <!-- /container -->
 {% endblock content %}

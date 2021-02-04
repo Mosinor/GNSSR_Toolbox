@@ -13,3 +13,10 @@ class UserInputForm(forms.Form):
 
     def clean(self):
         cleaned_data = super(UserInputForm, self).clean()
+
+
+class SimpleExampleForm(forms.Form):
+    number = forms.IntegerField()
+
+    def clean(self):
+        cleaned_data = super(SimpleExampleForm, self).clean()

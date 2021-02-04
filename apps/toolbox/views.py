@@ -14,3 +14,10 @@ def user_input(request):
         form = UserInputForm()
 
     return render(request, "toolbox/user_selection.html", {'form': form})
+
+
+def tool_selection(request):
+    return render(request, "toolbox/tool_selection.html",)
+
+def example(request):
+    return render(request, "toolbox/example.html",)

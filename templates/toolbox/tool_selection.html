@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Tool Selection{% endblock %}
+
+{% block content %}
+
+    <div class="container clearfix">
+        <div class="jumbotron">
+             <label for="cars">Select tool:</label>
+
+            <select name="cars" id="cars">
+              <option></option>
+              <option value="Example 1">Tool number 1</option>
+              <option value="Example 2">Number 2</option>
+              <option value="Example 3">This is 3</option>
+            </select>
+
+        </div>
+    </div> <!-- /container -->
+
+{% endblock content %}
+
