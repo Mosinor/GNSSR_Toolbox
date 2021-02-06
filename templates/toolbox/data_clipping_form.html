@@ -24,13 +24,13 @@
 
     <div class='input-group date' id='datetimepicker6'>
         <p>
-            <h4>Date:</h4>
+            <h4>Start Date and Time:</h4>
             <br>
-            {{ form.date }}
-            {% if form.date.help_text %}
-                <small class="form-text text-muted">{{ form.date.help_text }}</small>
+            {{ form.start_date }}
+            {% if form.start_date.help_text %}
+                <small class="form-text text-muted">{{ form.start_date.help_text }}</small>
             {% endif %}
-            {% for error in form.date.errors %}
+            {% for error in form.start_date.errors %}
                 <p style="color: red">{{ error }}</p>
             {% endfor %}
         </p>
@@ -38,31 +38,18 @@
 
     <div class='input-group date' id='datetimepicker6'>
         <p>
-            <h4>Start time:</h4>
+            <h4>End Date and Time:</h4>
             <br>
-            {{ form.start_time }}
-            {% if form.start_time.help_text %}
-                <small class="form-text text-muted">{{ form.start_time.help_text }}</small>
+            {{ form.end_date }}
+            {% if form.end_date.help_text %}
+                <small class="form-text text-muted">{{ form.end_date.help_text }}</small>
             {% endif %}
-            {% for error in form.start_time.errors %}
+            {% for error in form.end_date.errors %}
                 <p style="color: red">{{ error }}</p>
             {% endfor %}
         </p>
     </div>
 
-    <div class='input-group date' id='datetimepicker6'>
-        <p>
-            <h4>End time:</h4>
-            <br>
-            {{ form.end_time }}
-            {% if form.end_time.help_text %}
-                <small class="form-text text-muted">{{ form.end_time.help_text }}</small>
-            {% endif %}
-            {% for error in form.end_time.errors %}
-                <p style="color: red">{{ error }}</p>
-            {% endfor %}
-        </p>
-    </div>
 
      <div>
         <h4>Level:</h4>

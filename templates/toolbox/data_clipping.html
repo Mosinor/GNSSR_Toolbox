@@ -6,11 +6,22 @@
 
     <div class="container clearfix">
         <div class="jumbotron">
+            <h1>Data Clipping Tool</h1>
+            <p>
+                The second item in the applications’ drop-down menu is used for Data Clipping and Filtering. In this
+                item user can select multiple polygonal regions over the oceans or land and retrieve all the available
+                data over the selected regions during the period of interest. Our web-based toolbox facilitates the
+                data retrieval for those who don’t have processing/downloading facilities to work with
+                the CYGNSS’s big dataset.
+            </p>
 
-            <p>Work in progress.</p>
+            <hr>
+
+            {% include 'toolbox/data_clipping_form.html' %}
 
         </div>
     </div> <!-- /container -->
 
 {% endblock content %}
+
 

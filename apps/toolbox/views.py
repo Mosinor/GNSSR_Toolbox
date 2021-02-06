@@ -16,7 +16,14 @@ def track_demonstration(request):
 
 
 def data_clipping(request):
-    return render(request, "toolbox/data_clipping.html", )
+    if request.method == 'POST':
+        form = DataClippingTool(request.POST)
+        if form.is_valid():
+            print("Form submitted with data:")
+
+    else:
+        form = DataClippingTool()
+    return render(request, "toolbox/data_clipping.html", {'form': form})
 
 
 def example(request):
