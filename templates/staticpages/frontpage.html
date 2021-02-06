@@ -12,13 +12,15 @@
             </p>
 
 
-            <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div class="dropdown show">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Select Tool:
-            </a>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="{% url 'toolbox:user_input' %}">Example 1</a>
-                <a class="dropdown-item" href="{% url 'toolbox:tool_selection' %}">Example 2</a>
-                <a class="dropdown-item" href="{% url 'toolbox:example' %}">Example 3</a>
+                </a>
+                <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'toolbox:user_input' %}">Track Demonstration Tool</a>
+                <a disabled="true" class="dropdown-item" href="{% url 'toolbox:tool_selection' %}">Data Clipping Tool</a>
+                <a disabled class="dropdown-item" href="{% url 'toolbox:example' %}">...</a>
+                </div>
             </div>
 
         </div>
