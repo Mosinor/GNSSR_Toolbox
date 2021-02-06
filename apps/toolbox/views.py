@@ -3,7 +3,7 @@ from .forms import *
 
 
 # Form website where user defines input.
-def user_input(request):
+def track_demonstration(request):
     if request.method == 'POST':
         form = TrackDemoTool(request.POST)
         if form.is_valid():
@@ -12,11 +12,11 @@ def user_input(request):
     else:
         form = TrackDemoTool()
 
-    return render(request, "toolbox/user_selection.html", {'form': form})
+    return render(request, "toolbox/track_demonstration.html", {'form': form})
 
 
-def tool_selection(request):
-    return render(request, "toolbox/tool_selection.html",)
+def data_clipping(request):
+    return render(request, "toolbox/data_clipping.html", )
 
 
 def example(request):
