@@ -16,11 +16,7 @@
                 <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Select Tool:
                 </a>
-                <div class="dropdown-menu">
-                <a class="dropdown-item" href="{% url 'toolbox:track_demonstration' %}">Track Demonstration Tool</a>
-                <a disabled="true" class="dropdown-item" href="{% url 'toolbox:data_clipping' %}">Data Clipping Tool</a>
-                <a disabled class="dropdown-item" href="{% url 'toolbox:example' %}">...</a>
-                </div>
+                {% include 'staticpages/tool_selection.html' %}
             </div>
 
         </div>

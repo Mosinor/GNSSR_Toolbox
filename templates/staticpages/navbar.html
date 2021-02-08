@@ -13,11 +13,7 @@
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Tools
             </a>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="{% url 'toolbox:track_demonstration' %}">Track Demonstration Tool</a>
-                <a disabled="true" class="dropdown-item" href="{% url 'toolbox:data_clipping' %}">Data Clipping Tool</a>
-                <a disabled class="dropdown-item" href="{% url 'toolbox:example' %}">...</a>
-            </div>
+            {% include 'staticpages/tool_selection.html' %}
       </li>
     </ul>
   </div>

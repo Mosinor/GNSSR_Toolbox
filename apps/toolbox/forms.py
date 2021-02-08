@@ -10,8 +10,8 @@ class TrackDemoTool(forms.Form):
     date = forms.DateField(widget=DatePickerInput().start_of('event days'))
     start_time = forms.TimeField(widget=TimePickerInput().start_of('event days'))
     end_time = forms.TimeField(widget=TimePickerInput().start_of('event days'))
-    level = forms.ChoiceField(choices=[('1', 'L1'), ('2', 'L2'), ('3', 'L3')])
-    version = forms.ChoiceField(choices=[('2', 'v2.1'), ('3', 'v3.0')])
+    level = forms.ChoiceField(choices=[('L1', 'L1'), ('L2', 'L2'), ('L3', 'L3')])
+    version = forms.ChoiceField(choices=[('v2.1', 'v2.1'), ('v3.0', 'v3.0')])
 
     def clean(self):
         cleaned_data = super(TrackDemoTool, self).clean()
