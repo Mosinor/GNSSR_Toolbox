@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .forms import *
-from .opendap import generate_url
+import datetime
+from .opendap import generate_url, collect_dataset, clock_to_seconds
 
 
 # Form website where user defines input.
@@ -10,18 +11,24 @@ def track_demonstration(request):
         if form.is_valid():
             coordinate_a = form.cleaned_data['coordinate_a']
             coordinate_b = form.cleaned_data['coordinate_b']
-            lats = [coordinate_a.split(",")[0], coordinate_b.split(",")[0]]
-            lons = [coordinate_a.split(",")[1], coordinate_b.split(",")[1]]
             date = form.cleaned_data['date']
-            start_time = form.cleaned_data['start_time']
-            end_time = form.cleaned_data['end_time']
+            start_time = clock_to_seconds(form.cleaned_data['start_time'])
+            end_time = clock_to_seconds(form.cleaned_data['end_time'])
             level = form.cleaned_data['level']
             version = form.cleaned_data['version']
 
-            url = generate_url(date, level, version)
-            print(url)
+            lats = [coordinate_a.split(",")[0], coordinate_b.split(",")[0]]
+            lons = [coordinate_a.split(",")[1], coordinate_b.split(",")[1]]
 
+            print(start_time)
+            print(end_time)
 
+            #url = generate_url(date, level, version)
+            #print(url)
+            #for link in url:
+            #    print(link)
+            #    dataset = collect_dataset(link)
+            #    print(dataset)
 
 
     else:
