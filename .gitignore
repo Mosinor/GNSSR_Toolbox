@@ -26,6 +26,7 @@ media
 
 # Distribution / packaging
 .Python
+apps.kladding
 build/
 develop-eggs/
 dist/
@@ -69,6 +70,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 pytestdebug.log
+/kladding
 
 # Translations
 *.mo
@@ -126,6 +128,7 @@ ENV/
 env.bak/
 venv.bak/
 pythonenv*
+.virenv
 
 # Spyder project settings
 .spyderproject
@@ -156,6 +159,8 @@ dmypy.json
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
+.idea/misc.xml
+.idea/gnssr_toolbox.iml
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml

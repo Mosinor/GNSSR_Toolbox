@@ -80,8 +80,27 @@
 {% block script %}
     <script>
 
-        var map = L.map('id_grid-map', {drawControl: true}).setView([0, 0], 1);
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+        var southWest = L.latLng(-45, -182),
+        northEast = L.latLng(45, 182),
+        bounds = L.latLngBounds(southWest, northEast);
+
+        var map = L.map('id_grid-map', {
+            drawControl: true,
+            noWrap: true,
+            maxBounds: bounds,
+            maxZoom: 19,
+            minZoom: 2
+
+
+        }).setView([0, 0], 1);
+
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+          noWrap: true,
+          bounds: [
+            [-45, -180],
+            [45, 180]
+          ]
+        }).addTo(map);
 
         var rect;
 
