@@ -26,7 +26,6 @@ media
 
 # Distribution / packaging
 .Python
-apps.kladding
 build/
 develop-eggs/
 dist/

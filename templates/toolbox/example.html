@@ -1,16 +1,476 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Tool Selection{% endblock %}
+{% block title %}Onsala data{% endblock %}
+
+{% block script %}
+<script>
+    var endpoint = '/toolbox/chart/data/'
+    var levels = []
+    var ssl_lables = []
+    var roughness = []
+    var ssr_lables = []
+
+
+    $.ajax({
+        method: "GET",
+        url: endpoint,
+        success: function(data){
+            ssl_lables = data.ssr_lables
+            levels = data.levels
+            ssr_lables = data.ssr_lables
+            roughness = data.roughness
+            raw_data = data.raw_data
+            intf_data = data.intf_data
+            map_coordinates = data.map_coordinates
+            skyplot_data = data.skyplot_data
+
+
+            var i;
+            for (i = 0; i < raw_data.length; i++) {
+                $('#raw_chart').append('<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">\n' +
+                    '    <canvas id="Mst_raw_chart'+i+'" width="400" height="200"></canvas>\n' +
+                    '</div>\n' +
+                    '<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">\n' +
+                    '    <canvas id="Cpo_raw_chart'+i+'" width="400" height="200"></canvas>\n' +
+                    '</div>\n' +
+                    '<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">\n' +
+                    '    <canvas id="Xpo_raw_chart'+i+'" width="400" height="200"></canvas>\n' +
+                    '</div>')
+                set_raw_chart(i)
+            }
+
+            for (i = 0; i < intf_data.length; i++) {
+                $('#intf_chart').append('<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">\n' +
+                    '    <canvas id="Mst_int_chart'+i+'" width="400" height="200"></canvas>\n' +
+                    '</div>\n' +
+                    '<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">\n' +
+                    '    <canvas id="Cpo_int_chart'+i+'" width="400" height="200"></canvas>\n' +
+                    '</div>\n' +
+                    '<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">\n' +
+                    '    <canvas id="Xpo_int_chart'+i+'" width="400" height="200"></canvas>\n' +
+                    '</div>')
+                set_intf_chart(i)
+            }
+
+            setChart()
+            buildMap(map_coordinates)
+            set_skyplot(skyplot_data)
+
+
+        },
+        error: function(error_data){
+            console.log("error")
+            console.log(error_data)
+            buildMap()
+
+        }
+    })
+
+    function set_skyplot(skyplot_data) {
+
+        console.log(skyplot_data.length)
+
+        var data = []
+
+        for (i = 0; i < skyplot_data.length; i++) {
+            var prn = "#"+i+", PRN: "+skyplot_data[i][0]
+
+            var trace = {
+            r: skyplot_data[i][2],
+            theta: skyplot_data[i][1],
+            mode: 'lines',
+            name: prn,
+            type: 'scatterpolar',
+             };
+
+            data.push(trace)
+        }
+
+        var layout = {
+            title: 'Skyplot',
+            r0: 90,
+            font: {
+                family: 'Arial, sans-serif;',
+                size: 12,
+                color: '#000'
+            },
+            showlegend: false,
+        };
+
+        Plotly.newPlot('skyplot', data, layout);
+
+    };
+
+
+
+    function set_raw_chart(satellite_num){
+        var Mst_raw_data = document.getElementById('Mst_raw_chart'+satellite_num+'').getContext('2d');
+        var Cpo_raw_data = document.getElementById('Cpo_raw_chart'+satellite_num+'').getContext('2d');
+        var Xpo_raw_data = document.getElementById('Xpo_raw_chart'+satellite_num+'').getContext('2d');
+
+
+        var options = {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    distribution: 'series',
+                    time: {
+                        unit: 'minute'
+                    },
+
+                }]
+            },
+            elements: {
+                    point:{
+                        radius: 0
+                    }
+                }
+         };
+
+        var Mst_raw_chart = new Chart(Mst_raw_data, {
+            type: 'line',
+            data: {
+                labels: raw_data[satellite_num][7],
+                datasets: [{
+                    label: 'In-phase',
+                    data: raw_data[satellite_num][1],
+                    borderColor: ['rgb(0,112,186)'],
+                    borderWidth: 1,
+                    backgroundColor: "rgba(0,0,0,0)",
+                },
+                {
+                    label: 'Quadrature time series',
+                    data: raw_data[satellite_num][2],
+                    borderColor: ['rgb(132,44,72)'],
+                    borderWidth: 1,
+                    backgroundColor: "rgba(0,0,0,0)",
+                }]
+            },
+            options: options,
+
+        })
+
+        var Cpo_raw_chart = new Chart(Cpo_raw_data, {
+            type: 'line',
+            data: {
+                labels: raw_data[satellite_num][7],
+                datasets: [{
+                    label: 'In-phase',
+                    data: raw_data[satellite_num][3],
+                    borderColor: ['rgb(0,112,186)'],
+                    borderWidth: 1,
+                    backgroundColor: "rgba(0,0,0,0)",
+                },
+                {
+                    label: 'Quadrature time series',
+                    data: raw_data[satellite_num][4],
+                    borderColor: ['rgb(132,44,72)'],
+                    borderWidth: 1,
+                    backgroundColor: "rgba(0,0,0,0)",
+                }]
+            },
+            options: options,
+
+        })
+
+        var Xpo_raw_chart = new Chart(Xpo_raw_data, {
+            type: 'line',
+            data: {
+                labels: raw_data[satellite_num][7],
+                datasets: [{
+                    label: 'In-phase',
+                    data: raw_data[satellite_num][5],
+                    borderColor: ['rgb(0,112,186)'],
+                    borderWidth: 1,
+                    backgroundColor: "rgba(0,0,0,0)",
+                },
+                {
+                    label: 'Quadrature time series',
+                    data: raw_data[satellite_num][6],
+                    borderColor: ['rgb(132,44,72)'],
+                    borderWidth: 1,
+                    backgroundColor: "rgba(0,0,0,0)",
+                }]
+            },
+            options: options,
+
+        })
+
+
+    }
+
+
+    function set_intf_chart(satellite_num){
+        var Mst_int_data = document.getElementById('Mst_int_chart'+satellite_num+'').getContext('2d');
+        var Cpo_int_data = document.getElementById('Cpo_int_chart'+satellite_num+'').getContext('2d');
+        var Xpo_int_data = document.getElementById('Xpo_int_chart'+satellite_num+'').getContext('2d');
+
+
+        var options = {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    distribution: 'series',
+                    time: {
+                        unit: 'minute'
+                    },
+
+                }]
+            },
+            elements: {
+                    point:{
+                        radius: 0
+                    }
+                }
+         };
+
+        var Mst_int_chart = new Chart(Mst_int_data, {
+            type: 'line',
+            data: {
+                labels: intf_data[satellite_num][7],
+                datasets: [{
+                    label: 'In-phase',
+                    data: intf_data[satellite_num][1],
+                    borderColor: ['rgb(0,112,186)'],
+                    borderWidth: 1,
+                    backgroundColor: "rgba(0,0,0,0)",
+                },
+                {
+                    label: 'Quadrature time series',
+                    data: intf_data[satellite_num][2],
+                    borderColor: ['rgb(132,44,72)'],
+                    borderWidth: 1,
+                    backgroundColor: "rgba(0,0,0,0)",
+                }]
+            },
+            options: options,
+
+        })
+
+        var Cpo_int_chart = new Chart(Cpo_int_data, {
+            type: 'line',
+            data: {
+                labels: intf_data[satellite_num][7],
+                datasets: [{
+                    label: 'In-phase',
+                    data: intf_data[satellite_num][3],
+                    borderColor: ['rgb(0,112,186)'],
+                    borderWidth: 1,
+                    backgroundColor: "rgba(0,0,0,0)",
+                },
+                {
+                    label: 'Quadrature time series',
+                    data: intf_data[satellite_num][4],
+                    borderColor: ['rgb(132,44,72)'],
+                    borderWidth: 1,
+                    backgroundColor: "rgba(0,0,0,0)",
+                }]
+            },
+            options: options,
+
+        })
+
+        var Xpo_int_chart = new Chart(Xpo_int_data, {
+            type: 'line',
+            data: {
+                labels: intf_data[satellite_num][7],
+                datasets: [{
+                    label: 'In-phase',
+                    data: intf_data[satellite_num][5],
+                    borderColor: ['rgb(0,112,186)'],
+                    borderWidth: 1,
+                    backgroundColor: "rgba(0,0,0,0)",
+                },
+                {
+                    label: 'Quadrature time series',
+                    data: intf_data[satellite_num][6],
+                    borderColor: ['rgb(132,44,72)'],
+                    borderWidth: 1,
+                    backgroundColor: "rgba(0,0,0,0)",
+                }]
+            },
+            options: options,
+
+        })
+
+
+    }
+
+
+    function setChart(){
+        var sea_level = document.getElementById('seaLevelChart').getContext('2d');
+        var sea_roughness = document.getElementById('seaRougnessChart').getContext('2d');
+
+        var options = {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    distribution: 'series',
+                    time: {
+                        unit: 'hour'
+                    }
+                }]
+            },
+            elements: {
+                    point:{
+                        radius: 0
+                    }
+                }
+         };
+
+
+        var seaLevelChart = new Chart(sea_level, {
+            type: 'line',
+            data: {
+                labels: ssl_lables,
+                datasets: [{
+                    label: 'Sea Surface Level (m)',
+                    data: levels,
+                    backgroundColor: ['rgba(46,77,168,0.2)'],
+                    borderColor: ['rgb(0,63,186)'],
+                    borderWidth: 1,
+                }]
+            },
+            options: options,
+
+        })
+
+        var seaRougnessChart = new Chart(sea_roughness, {
+            type: 'line',
+            data: {
+                labels: ssr_lables,
+                datasets: [{
+                    label: 'Sea Surface Roughness (cm)',
+                    data: roughness,
+                    backgroundColor: ['rgba(46,77,168,0.2)'],
+                    borderColor: ['rgb(0,63,186)'],
+                    borderWidth: 1,
+                }]
+            },
+            options: options,
+
+        })
+    }
+
+    function buildMap(satellites) {
+        // Leaflet map
+        var map = L.map('mapid', {
+            preferCanvas: true,
+        });
+        map.setView([57.3927, 11.913], 15);
+
+        southWest = L.latLng(57.38, 11.88);
+        northEast = L.latLng(57.40, 11.95);
+        bounds = L.latLngBounds(southWest, northEast);
+        map.setMaxBounds(bounds);
+        map.on('drag', function () {
+            map.panInsideBounds(bounds, {animate: false});
+        });
+
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            noWrap: true,
+            minZoom: 15,
+            maxZoom: 19,
+        }).addTo(map);
+
+        var satellite;
+        var overlayMaps = {};
+
+
+        for (satellite = 0; satellite < satellites.length; satellite++) {
+            var prn = "#"+satellite+", PRN: "+satellites[satellite][0]
+
+            var i;
+            var coordinates = L.layerGroup();
+            var color = "#" + ((1<<24)*Math.random() | 0).toString(16)
+            console.log(satellites[satellite][1])
+            for (i = 0; i < satellites[satellite][1].length; i++) {
+                L.circleMarker([satellites[satellite][1][i], satellites[satellite][2][i]], {color: color, radius: 1}).bindPopup(prn).addTo(coordinates)
+            }
+            overlayMaps[prn] = coordinates
+        }
+        L.control.layers(null, overlayMaps).addTo(map);
+
+
+    }
+
+
+</script>
+{% endblock script %}
 
 {% block content %}
 
-    <div class="container clearfix">
-        <div class="jumbotron">
 
-            This is the third example page.
+<div class="container">
+    {# Sea Sureface Product Charts #}
+    <div style="border: 1px solid green">
+        <h1 style="text-align: center">GNSS-R sea surface products</h1>
+        <div class="row">
 
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                <canvas id="seaLevelChart" width="400" height="400"></canvas>
+            </div>
+
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                <canvas id="seaRougnessChart" width="400" height="400"></canvas>
+            </div>
+
+         </div>
+    </div>
+
+    {# Observation Details Charts #}
+    <div style="border: 1px solid green">
+        <h1 style="text-align: center">Observation details</h1>
+        <div class="row">
+            <div class="col-md-4 col-lg-4">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>PRN</th>
+                            <th style="text-align: center" colspan=2>Elevation angle range</th>
+                            <th style="text-align: center" colspan=2>Azimuth angle range</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for satellite in table_data %}
+                            <tr>
+                                {% for measure in satellite %}
+                                    <td>{{ measure }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                 </table>
+            </div>
+
+             <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <div id="skyplot"></div>
+
+            </div>
+
+             <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                 <h1>map</h1>
+                 <div style="height: 300px" id="mapid"></div>
+            </div>
+
+         </div>
+    </div>
+
+    {# Raw observations #}
+    <div style="border: 1px solid green">
+        <h1 style="text-align: center">Raw observations</h1>
+        <div class="row" id="raw_chart">
+            {# Generated by Javascript #}
         </div>
-    </div> <!-- /container -->
+    </div>
 
+    {# Interferometric Fringe #}
+    <div style="border: 1px solid green">
+        <h1 style="text-align: center">Interferometric Fringe</h1>
+        <div class="row" id="intf_chart">
+            {# Generated by Javascript #}
+        </div>
+    </div>
+
+</div>
 {% endblock content %}
-

@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'leaflet',
     'widget_tweaks',
     'bootstrap_datepicker_plus',
+    'rest_framework',
 
     # Local apps
     'apps.staticpages',
