@@ -4,13 +4,23 @@
 
 {% block script %}
 <script>
+    tickrate = 0;
+    setInterval(function() {
+        tickrate = ++tickrate % 4;
+        $(".loading").text("Please wait while data is loading" + Array(tickrate+1).join("."));
+    }   , 250);
+
+
     var endpoint = '/toolbox/chart/data/'
     var levels = []
     var ssl_lables = []
     var roughness = []
     var ssr_lables = []
 
+
+
     $.ajax({
+
         method: "GET",
         url: endpoint,
         success: function(data){
@@ -54,6 +64,7 @@
             setChart()
             buildMap(map_coordinates)
             set_skyplot(skyplot_data)
+
             $(".loadingMessage").hide();
 
 
@@ -438,10 +449,41 @@
     th {
     background: #eee;
     }
+
+    .overlay{
+        opacity:0.95;
+        background-color:#ccc;
+        position:absolute;
+        width:100%;
+        height:100%;
+        top:0px;
+        left:0px;
+        z-index:1000;
+    }
+
+    #mydiv {
+        position:fixed;
+        top: 50%;
+        left: 50%;
+        width:30em;
+        height:18em;
+        margin-top: -9em; /*set to a negative number 1/2 of your height*/
+        margin-left: -15em; /*set to a negative number 1/2 of your width*/
+        border: 1px solid #ccc;
+        background-color: #f3f3f3;
+    }
+
+    .loading {
+      font-size: 1.5em;
+      font-family: Georgia;
+      /*color: #f0f0f0;*/
+    }
 </style>
 
-<div class="loadingMessage">
-    <h1 style="text-align: center"> Data is loading...</h1>
+<div class="loadingMessage overlay">
+    <div id="mydiv">
+                <h1 style="text-align: center" class="loading">Please wait while data is loading</h1>
+    </div>
 </div>
 
 <div class="container">
@@ -494,7 +536,6 @@
             </div>
 
              <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                 <h1>map</h1>
                  <div style="height: 300px" id="mapid"></div>
             </div>
 
