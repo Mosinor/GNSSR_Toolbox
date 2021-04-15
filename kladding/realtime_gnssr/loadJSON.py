@@ -1,8 +1,10 @@
 import json
 from datetime import datetime as dt
+from datetime import timedelta
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+
 
 
 def load_json_data(filepath):
@@ -59,19 +61,46 @@ def collect_sat_info():
     data = load_json_data(file)
 
     sat_info = []
-    satellite_coordinates = []
 
     for measure in data:
         time = (ordinal_to_iso(measure["time"]))
-        sat_info.append([measure["sat_prn"], measure["sat_elevation"], measure["sat_azimuth"], time])
-        satellite_coordinates.append([measure["sat_prn"], measure["sp_lat"], measure["sp_lon"]])
+        sat_info.append([measure["sat_prn"], measure["sat_elevation"], measure["sat_azimuth"], time, measure["sp_lat"], measure["sp_lon"]])
 
-    # Split the data into separate arrays for satellites by PRN number
+    # Split the data into separate arrays for satellites by when PRN change is detected.
+    separate_satellites_prn = np.split(np.array(sat_info), np.where(np.diff(np.array(sat_info)[:, 0]))[0]+1)
 
-    separate_satellites = np.split(np.array(sat_info), np.where(np.diff(np.array(sat_info)[:, 0]))[0]+1)
+    # Also check for big difference in timestamp
+    separate_satellites = []
+    event = False
+    a = 0
+    for satellite in separate_satellites_prn:
+        split = []
+        for t in range(0, len(satellite) - 1):
+            if satellite[t + 1][3] - satellite[t][3] > timedelta(minutes=1):
+                event = True
+                split.append(t+1)
+        if event:
+            atcho = np.split(satellite, split)
+
+            separate_satellites.append(atcho[0])
+            separate_satellites.append(atcho[1])
+
+
+            event = False
+        else:
+            separate_satellites.append(satellite)
+
+
+
 
     table_info = []
     elevation_data = []
+
+
+
+
+
+
 
     for satellite in separate_satellites:
         prn = int(satellite[0][0])
@@ -82,13 +111,16 @@ def collect_sat_info():
         table_info.append([prn, elevation_min, elevation_max, azimuth_min, azimuth_max])
         elevation_data.append([prn, satellite[:, 1], satellite[:, 2]])
 
-    satellite_coordinates = np.split(np.array(satellite_coordinates), np.where(np.diff(np.array(satellite_coordinates)[:, 0]))[0] + 1)
+
     coordinates = []
-    for satellite in satellite_coordinates:
+    for satellite in separate_satellites:
         prn = int(satellite[0][0])
-        lat = satellite[:, 1]
-        lon = satellite[:, 2]
-        coordinates.append([prn, lat, lon])
+        lat = satellite[:, 4]
+        lon = satellite[:, 5]
+        time = satellite[:, 3]
+        elevation = satellite[:, 2]
+        azimuth = satellite[:, 1]
+        coordinates.append([prn, lat, lon, time, elevation, azimuth])
 
 
     return table_info, coordinates, elevation_data
@@ -154,11 +186,3 @@ def interferometric_fringe_info():
         intf_chart_data.append([prn, Mst_int_I, Mst_int_q, Cpo_int_I, Cpo_int_q, Xpo_int_I, Xpo_int_q, time])
 
     return intf_chart_data
-
-
-
-# TODO: - Separate the data into unique satellites
-# TODO: - Plot the trajectory for each satellite with given cutoff angle
-def skyplot():
-    # Polar coordinates -> polar(azi, ele)
-    return None

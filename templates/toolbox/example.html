@@ -10,7 +10,6 @@
     var roughness = []
     var ssr_lables = []
 
-
     $.ajax({
         method: "GET",
         url: endpoint,
@@ -55,6 +54,8 @@
             setChart()
             buildMap(map_coordinates)
             set_skyplot(skyplot_data)
+            $(".loadingMessage").hide();
+
 
 
         },
@@ -64,11 +65,12 @@
             buildMap()
 
         }
+
+
+
     })
 
     function set_skyplot(skyplot_data) {
-
-        console.log(skyplot_data.length)
 
         var data = []
 
@@ -76,11 +78,14 @@
             var prn = "#"+i+", PRN: "+skyplot_data[i][0]
 
             var trace = {
-            r: skyplot_data[i][2],
-            theta: skyplot_data[i][1],
-            mode: 'lines',
-            name: prn,
-            type: 'scatterpolar',
+                r: skyplot_data[i][1],
+                theta: skyplot_data[i][2],
+                mode: 'lines',
+                name: prn,
+                type: 'scatterpolar',
+                direction: "clockwise",
+                dr: 1,
+                r0: 90,
              };
 
             data.push(trace)
@@ -88,13 +93,26 @@
 
         var layout = {
             title: 'Skyplot',
-            r0: 90,
+
             font: {
                 family: 'Arial, sans-serif;',
                 size: 12,
                 color: '#000'
             },
+
             showlegend: false,
+
+
+            polar: {
+                angularaxis: {
+                    direction: "clockwise",
+                    tickvals: [0, 90, 180, 270],
+                    ticktext: ["N (360 / 0)", "E (90)", "S (180)","W (270)"]
+                },
+                radialaxis: {
+                    range: [90, 0],
+                }
+            }
         };
 
         Plotly.newPlot('skyplot', data, layout);
@@ -373,38 +391,63 @@
             maxZoom: 19,
         }).addTo(map);
 
-        var satellite;
+        var prn
         var overlayMaps = {};
 
 
-        for (satellite = 0; satellite < satellites.length; satellite++) {
-            var prn = "#"+satellite+", PRN: "+satellites[satellite][0]
+        for (prn = 0; prn < satellites.length; prn++) {
+            var prn_number = "#"+prn+", PRN: "+satellites[prn][0]
 
             var i;
             var coordinates = L.layerGroup();
             var color = "#" + ((1<<24)*Math.random() | 0).toString(16)
-            console.log(satellites[satellite][1])
-            for (i = 0; i < satellites[satellite][1].length; i++) {
-                L.circleMarker([satellites[satellite][1][i], satellites[satellite][2][i]], {color: color, radius: 1}).bindPopup(prn).addTo(coordinates)
+            for (i = 0; i < satellites[prn][1].length; i++) {
+                var metadata = "Satellite: "+prn_number+"<hr> Lat: "+String(satellites[prn][1][i])+"<br> Lon:"+String(satellites[prn][2][i])+"<br> Time:"+String(satellites[prn][3][i])+"<br> Azimuth:"+String(satellites[prn][4][i])+"<br> Elevation:"+String(satellites[prn][5][i]);
+
+                L.circleMarker([satellites[prn][1][i], satellites[prn][2][i]], {color: color, radius: 1}).bindPopup(metadata).addTo(coordinates)
             }
-            overlayMaps[prn] = coordinates
+            overlayMaps[prn_number] = coordinates
         }
         L.control.layers(null, overlayMaps).addTo(map);
 
 
     }
 
-
 </script>
 {% endblock script %}
 
 {% block content %}
+<style>
+    .tableFixHead {
+        overflow-y: auto;
+        height: 400px;
+    }
+    .tableFixHead thead th {
+        position: sticky;
+        top: -5px;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th,
+    td {
+        padding: 8px 16px;
+        border: 1px solid #ccc;
+    }
+    th {
+    background: #eee;
+    }
+</style>
 
+<div class="loadingMessage">
+    <h1 style="text-align: center"> Data is loading...</h1>
+</div>
 
 <div class="container">
     {# Sea Sureface Product Charts #}
-    <div style="border: 1px solid green">
-        <h1 style="text-align: center">GNSS-R sea surface products</h1>
+    <div>
+        <h1 style="text-align: center">GNSS-R Sea Surface Products</h1> <hr>
         <div class="row">
 
             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
@@ -419,10 +462,12 @@
     </div>
 
     {# Observation Details Charts #}
-    <div style="border: 1px solid green">
-        <h1 style="text-align: center">Observation details</h1>
+    <div>
+        <h1 style="text-align: center">Observation Details</h1> <hr>
+
         <div class="row">
-            <div class="col-md-4 col-lg-4">
+
+            <div class="col-md-4 col-lg-4 tableFixHead">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -431,7 +476,7 @@
                             <th style="text-align: center" colspan=2>Azimuth angle range</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="scrollable">
                         {% for satellite in table_data %}
                             <tr>
                                 {% for measure in satellite %}
@@ -440,7 +485,7 @@
                             </tr>
                         {% endfor %}
                     </tbody>
-                 </table>
+                </table>
             </div>
 
              <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
@@ -457,8 +502,8 @@
     </div>
 
     {# Raw observations #}
-    <div style="border: 1px solid green">
-        <h1 style="text-align: center">Raw observations</h1>
+    <div>
+        <h1 style="text-align: center">Raw Observations</h1> <hr>
         <div class="row" id="raw_chart">
             {# Generated by Javascript #}
         </div>
@@ -466,7 +511,7 @@
 
     {# Interferometric Fringe #}
     <div style="border: 1px solid green">
-        <h1 style="text-align: center">Interferometric Fringe</h1>
+        <h1 style="text-align: center">Interferometric Fringe</h1> <hr>
         <div class="row" id="intf_chart">
             {# Generated by Javascript #}
         </div>

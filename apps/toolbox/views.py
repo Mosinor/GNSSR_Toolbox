@@ -65,6 +65,7 @@ class HomeView(View):
 
         return render(request, 'toolbox/example.html', {'table_data': table_data, })
 
+
 # API / JSON test call
 def get_data(request, *args, **kwargs):
     data = {
