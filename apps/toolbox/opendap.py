@@ -3,6 +3,12 @@ import numpy as np
 
 
 def generate_url(date, level, version):
+
+    if version == "2":
+        version = "v2.1"
+    elif version == "3":
+        version = "v3.0"
+
     opendap_url = []
     base_url = "https://podaac-opendap.jpl.nasa.gov/opendap/hyrax/allData/cygnss/"+level+"/"+version+"/"
     date_string = str(date.year) + str(date.month).zfill(2) + str(date.day).zfill(2)
