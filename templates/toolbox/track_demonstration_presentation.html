@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}User Input{% endblock %}
+
+{% block script %}
+<script>
+    map_coordinates = {{ track_list }}
+    boundary = {{ boundary }}
+
+    buildMap(map_coordinates, boundary)
+
+    function buildMap(tracks, boundary) {
+        // Leaflet map
+        var map = L.map('mapid', {
+            preferCanvas: true,
+        });
+
+        console.log(boundary[0], boundary[3]);
+
+        map.setView([boundary[0], boundary[3]], 15);
+
+        southWest = L.latLng(boundary[2], boundary[1]);
+        northEast = L.latLng(boundary[0], boundary[3]);
+        bounds = L.latLngBounds(southWest, northEast);
+        map.setMaxBounds(bounds);
+
+        map.on('drag', function () {
+            map.panInsideBounds(bounds, {animate: false});
+        });
+
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            //noWrap: true,
+            //minZoom: 15,
+            //maxZoom: 19,
+        }).addTo(map);
+
+        var track
+        var overlayMaps = {};
+
+        for (track = 0; track < tracks.length; track++) {
+            var layer_name = "Layer #: "+track
+
+            var i;
+            var coordinates = L.layerGroup();
+            var color = "#" + ((1<<24)*Math.random() | 0).toString(16)
+
+            for (i = 0; i < tracks[track][0].length; i++) {
+                var metadata = "Point Meta"
+
+                L.circleMarker([tracks[track][0][i][0], tracks[track][1][i][0]], {color: color, radius: 1}).bindPopup(metadata).addTo(coordinates)
+            }
+            overlayMaps[layer_name] = coordinates
+        }
+        L.control.layers(null, overlayMaps).addTo(map);
+
+        var rectOptions = {color: 'Red', weight: 1, fillColor: '#1e209e', fillOpacity: 0.1}
+        var rectangle = L.rectangle(bounds, rectOptions)
+        map.fitBounds(rectangle.getBounds());
+
+        rectangle.addTo(map);
+
+    }
+</script>
+
+{% endblock script %}
+
+{% block content %}
+
+    <div class="container clearfix">
+        <div class="jumbotron">
+        <h1>Track Demonstration Tool</h1>
+        <p>
+            So you sent me here?
+        </p>
+
+        <div>
+            <div style="height: 300px" id="mapid"></div>
+        </div>
+
+
+        </div>
+    </div> <!-- /container -->
+
+{% endblock content %}
+

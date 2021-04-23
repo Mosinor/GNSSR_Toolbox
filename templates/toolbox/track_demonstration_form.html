@@ -80,19 +80,29 @@
 {% block script %}
     <script>
 
-        var southWest = L.latLng(-45, -182),
-        northEast = L.latLng(45, 182),
+        var southWest = L.latLng(-45, -180),
+        northEast = L.latLng(45, 180),
         bounds = L.latLngBounds(southWest, northEast);
 
+
         var map = L.map('id_grid-map', {
-            drawControl: true,
             noWrap: true,
             maxBounds: bounds,
             maxZoom: 19,
-            minZoom: 2
+            minZoom: 3
 
 
         }).setView([0, 0], 1);
+
+        const drawControl = new L.Control.Draw({
+                 draw: {polygon: false,
+                 polyline: false,
+                 marker: false,
+                 circle: false,
+                 rectangle: true}
+         });
+
+
 
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
           noWrap: true,
@@ -102,47 +112,43 @@
           ]
         }).addTo(map);
 
+        var northBoundary = [
+            [45, -180],
+            [45, 180]
+        ];
+
+        var southBoundary = [
+            [-45, -180],
+            [-45, 180]
+        ];
+
+        L.polyline(northBoundary, {color: 'red'}).addTo(map);
+        L.polyline(southBoundary, {color: 'red'}).addTo(map);
+
+
+        this.map.addControl(drawControl)
+
+        this.map.on('draw:created', (e) => {
+            var bounds = [e.layer._bounds._northEast, e.layer._bounds._southWest]
+
+            CreateRectangle(bounds);
+
+        })
+
         var rect;
 
-        var markerA = L.marker([33, -72], {title: "Point A", draggable: true})
-		.addTo(map)
-		.on('dragend', function() {
-			var coord = String(markerA.getLatLng()).split(',');
-			var lat = coord[0].split('(');
-			var lng = coord[1].split(')');
-			document.getElementById("coordinate_a").value = ""+lat[1]+","+lng[0]+"";
-			CreateRectangle();
-		});
+        function CreateRectangle(bounds){
 
-        var markerB = L.marker([27, -60], {title: "Point B", draggable: true})
-        .addTo(map)
-        .on('dragend', function() {
-            var coord = String(markerB.getLatLng()).split(',');
-			var lat = coord[0].split('(');
-			var lng = coord[1].split(')');
-			document.getElementById("coordinate_b").value = ""+lat[1]+","+lng[0]+"";
-            CreateRectangle();
-		});
-
-        CreateRectangle();
-
-        function CreateRectangle(){
-            var bounds = [[Object.values(Object.values(markerA)[1])[0], Object.values(Object.values(markerA)[1])[1]],[Object.values(Object.values(markerB)[1])[0], Object.values(Object.values(markerB)[1])[1]]];
+            document.getElementById("coordinate_a").value = bounds[0].lat+","+bounds[0].lng;
+            document.getElementById("coordinate_b").value = bounds[1].lat+","+bounds[1].lng;
 
 
             if(rect)
             {
-                map.removeLayer(rect); // remove the old polygon...
+                map.removeLayer(rect); // remove the old rectangle...
             }
 
-            rect = L.rectangle(bounds, {color: 'blue', weight: 1}).on('click', function (e) {
-                // There event is event object
-                // there e.type === 'click'
-                // there e.lanlng === L.LatLng on map
-                // there e.target.getLatLngs() - your rectangle coordinates
-                // but e.target !== rect
-                console.info(e);
-            }).addTo(map);
+            rect = L.rectangle(bounds, {color: 'blue', weight: 1}).addTo(map);
 
         }
 

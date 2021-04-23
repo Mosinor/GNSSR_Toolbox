@@ -8,18 +8,20 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from kladding.realtime_gnssr.loadJSON import collect_sea_levels, collect_sea_roughness, collect_sat_info,\
      raw_measure_info, interferometric_fringe_info
+from .data_clipping import collect_level_3_data, collect_level_1_data
+from .track_demonstration import collect_level_1_demo_data
 
 
 def track_demonstration(request):
     if request.method == 'POST':
         form = TrackDemoTool(request.POST)
         if form.is_valid():
-            # variables
-
             coordinate_a = form.cleaned_data['coordinate_a']
             coordinate_b = form.cleaned_data['coordinate_b']
             lats = [float(coordinate_a.split(",")[0]), float(coordinate_b.split(",")[0])]
             lons = [float(coordinate_a.split(",")[1]), float(coordinate_b.split(",")[1])]
+
+            location = [max(lats), min(lons), min(lats), max(lons)]
 
             date = form.cleaned_data['date']
             start_time = clock_to_seconds(form.cleaned_data['start_time'])
@@ -28,22 +30,30 @@ def track_demonstration(request):
             level = form.cleaned_data['level']
             version = form.cleaned_data['version']
 
-            print(date)
             print(level)
-            print(version)
 
-            # gather dataset
-            url = generate_url(date, level, version)
+            v = ""
+            if version == "2":
+                v = "v2.1"
+            elif version == "3":
+                v = "v3.0"
+
             track_list = []
+            if level == "L1":
+                print(level)
+                key_variable = form.cleaned_data['keys_level1']
+                track_list = collect_level_1_demo_data(date, location, start_time, end_time, level, version)
 
-            # collect tracks
-            for link in url:
-                print(url)
-                dataset = collect_dataset(link)
+            elif level == "L2":
+                pass
 
-                tracks = filter_valid_points_time_specific_level1(dataset, lats, lons, start_time, end_time)
-                print(len(tracks))
-                print(tracks)
+            elif level == "L3":
+                pass
+
+
+            return render(request, "toolbox/track_demonstration_presentation.html", {'track_list': track_list, 'boundary': location})
+
+
 
     else:
         form = TrackDemoTool()
@@ -60,6 +70,8 @@ def data_clipping(request):
             lats = [float(coordinate_a.split(",")[0]), float(coordinate_b.split(",")[0])]
             lons = [float(coordinate_a.split(",")[1]), float(coordinate_b.split(",")[1])]
 
+            location = [max(lats), min(lons), min(lats), max(lons)]
+
             start_date = form.cleaned_data['start_date']
             end_date = form.cleaned_data['end_date']
 
@@ -69,12 +81,31 @@ def data_clipping(request):
             level = form.cleaned_data['level']
             version = form.cleaned_data['version']
 
-            for date in selected_dates:
-                url = generate_url(date, level, version)
-                print(url[0])
-                dataset = collect_dataset(url[0])
+            v = ""
+            if version == "2":
+                v = "v2.1"
+            elif version == "3":
+                v = "v3.0"
 
-                print(dataset)
+            keys = []
+            if level == "1":
+                keys = form.cleaned_data['keys_level1']
+                collect_level_1_data(start_date, end_date, location, "L1", keys, v)
+
+            elif level == "2":
+                keys = form.cleaned_data['keys_level2']
+                print(start_date)
+                print(end_date)
+                print(keys)
+                print(v)
+                print(location)
+
+            elif level == "3":
+                keys = form.cleaned_data['keys_level3']
+                collect_level_3_data(start_date, end_date, location, "L3", keys, v)
+
+
+
 
 
 
