@@ -6,13 +6,17 @@
 
     <div class="container clearfix">
         <div class="jumbotron">
-        <h1>Track Demonstration Tool</h1>
+        <h1 style="text-align: center">Track Demonstration Tool</h1>
         <p>
             This tool gives a demonstration of the CYGNSS tracks. Here you choose a region of interest, date and timeframe,
             dataset and parameters. From this we will show all the relevant tracks of the CYGNSS dataset and give some useful
             information.
         </p>
             <hr>
+            <h1 style="color: red">
+                {{ error_msg }}
+            </h1>
+
         {% include 'toolbox/track_demonstration_form.html' %}
 
         </div>

@@ -9,10 +9,11 @@ from rest_framework.response import Response
 from kladding.realtime_gnssr.loadJSON import collect_sea_levels, collect_sea_roughness, collect_sat_info,\
      raw_measure_info, interferometric_fringe_info
 from .data_clipping import collect_level_3_data, collect_level_1_data
-from .track_demonstration import collect_level_1_demo_data
+from .track_demonstration import collect_level_1_demo_data, collect_level_2_demo_data
 
 
 def track_demonstration(request):
+    error_message = ""
     if request.method == 'POST':
         form = TrackDemoTool(request.POST)
         if form.is_valid():
@@ -30,7 +31,7 @@ def track_demonstration(request):
             level = form.cleaned_data['level']
             version = form.cleaned_data['version']
 
-            print(level)
+            x_axis_selection = form.cleaned_data['x_axis_selection']
 
             v = ""
             if version == "2":
@@ -39,26 +40,41 @@ def track_demonstration(request):
                 v = "v3.0"
 
             track_list = []
+            graph_selection = []
             if level == "L1":
-                print(level)
-                key_variable = form.cleaned_data['keys_level1']
-                track_list = collect_level_1_demo_data(date, location, start_time, end_time, level, version)
+                y_axis_selection_1 = form.cleaned_data['L1_y_axis_selection_1']
+                y_axis_selection_2 = form.cleaned_data['L1_y_axis_selection_2']
 
+                graph_selection = [x_axis_selection, y_axis_selection_1, y_axis_selection_2]
+
+                track_list, url = collect_level_1_demo_data(date, location, start_time, end_time, level, version, graph_selection)
+
+            # Level 2 selection:
             elif level == "L2":
-                pass
+                y_axis_selection_1 = form.cleaned_data['L2_y_axis_selection_1']
+                y_axis_selection_2 = form.cleaned_data['L2_y_axis_selection_2']
+
+                graph_selection = [x_axis_selection, y_axis_selection_1, y_axis_selection_2]
+
+                track_list, url = collect_level_2_demo_data(date, location, start_time, end_time, level, version, graph_selection)
+
 
             elif level == "L3":
-                pass
+                y_axis_selection_1 = form.cleaned_data['L3_y_axis_selection_1']
+                y_axis_selection_2 = form.cleaned_data['L3_y_axis_selection_2']
 
+                graph_selection = [x_axis_selection, y_axis_selection_1, y_axis_selection_2]
 
-            return render(request, "toolbox/track_demonstration_presentation.html", {'track_list': track_list, 'boundary': location})
-
-
+            if any(track_list):
+                return render(request, "toolbox/track_demonstration_presentation.html",
+                              {'track_list': track_list, 'boundary': location, 'graph_selection': graph_selection})
+            else:
+                error_message = "No tracks detected, please try another input."
 
     else:
         form = TrackDemoTool()
 
-    return render(request, "toolbox/track_demonstration.html", {'form': form})
+    return render(request, "toolbox/track_demonstration.html", {'form': form, 'error_msg': error_message})
 
 
 def data_clipping(request):
@@ -113,10 +129,6 @@ def data_clipping(request):
     else:
         form = DataClippingTool()
     return render(request, "toolbox/data_clipping.html", {'form': form})
-
-
-
-
 
 
 class HomeView(View):

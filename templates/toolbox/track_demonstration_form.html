@@ -5,39 +5,50 @@
     {{ form.media }}
     {% csrf_token %}
     <div>
-        <h4>Selection Area:</h4>
-        <br>
+        <h4 style="text-align: center">Selection Area:</h4>
         {{ form.grid }}
         {% for error in form.grid.errors %}
             <p style="color: #ff0000">{{ error }}</p>
         {% endfor %}
     </div>
 
-    <p>Selected coordinates:</p>
-    <label for="coordinate_a">Top Left: </label>
-    <input id="coordinate_a" type="text" name="coordinate_a">
-
-    <label for="coordinate_b">Bottom Right: </label>
-    <input id="coordinate_b" type="text" name="coordinate_b">
-
-    <hr>
-
-    <div class='input-group date' id='datetimepicker6'>
-        <p>
-            <h4>Date:</h4>
-            <br>
-            {{ form.date }}
-            {% if form.date.help_text %}
-                <small class="form-text text-muted">{{ form.date.help_text }}</small>
-            {% endif %}
-            {% for error in form.date.errors %}
-                <p style="color: red">{{ error }}</p>
-            {% endfor %}
-        </p>
+    <i style="text-align: center">Enter coordinates by using the square tool on the map or write them in the box:</i> <br>
+    <br>
+    <div class="row">
+        <div class="input-group mb-3 date col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default"><b>Top Left</b></span>
+            </div>
+            <input id="coordinate_a" name="coordinate_a" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+        <div class="input-group mb-3 date col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default"><b>Bottom Right</b></span>
+            </div>
+            <input id="coordinate_b" name="coordinate_b" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
     </div>
 
-    <div class='input-group date' id='datetimepicker6'>
-        <p>
+
+
+    <hr>
+    <p>Database parameters:</p>
+    <div class="row">
+
+        <div class='input-group date col-xs-12 col-sm-12 col-md-4 col-lg-4' id='datetimepicker6'>
+            <h4>Date:</h4>
+                <br>
+                {{ form.date }}
+                {% if form.date.help_text %}
+                    <small class="form-text text-muted">{{ form.date.help_text }}</small>
+                {% endif %}
+                {% for error in form.date.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
+        </div>
+
+
+        <div class='input-group date col-xs-12 col-sm-12 col-md-4 col-lg-4' id='datetimepicker6'>
             <h4>Start time:</h4>
             <br>
             {{ form.start_time }}
@@ -47,38 +58,99 @@
             {% for error in form.start_time.errors %}
                 <p style="color: red">{{ error }}</p>
             {% endfor %}
-        </p>
-    </div>
+        </div>
 
-    <div class='input-group date' id='datetimepicker6'>
-        <p>
-            <h4>End time:</h4>
-            <br>
-            {{ form.end_time }}
-            {% if form.end_time.help_text %}
-                <small class="form-text text-muted">{{ form.end_time.help_text }}</small>
-            {% endif %}
-            {% for error in form.end_time.errors %}
-                <p style="color: red">{{ error }}</p>
-            {% endfor %}
-        </p>
-    </div>
-
-     <div>
-        <h4>Level:</h4>
-         {{ form.level }}
-        <h4>Version</h4>
-        {{ form.version }}
+        <div class='input-group date col-xs-12 col-sm-12 col-md-4 col-lg-4' id='datetimepicker6'>
+                <h4>End time:</h4>
+                <br>
+                {{ form.end_time }}
+                {% if form.end_time.help_text %}
+                    <small class="form-text text-muted">{{ form.end_time.help_text }}</small>
+                {% endif %}
+                {% for error in form.end_time.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
+        </div>
     </div>
 
     <br>
 
+    <div class="row">
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <h4>Dataset Level:</h4>
+            {{ form.level }}
+        </div>
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <h4>Dataset Version:</h4>
+            {{ form.version }}
+        </div>
+         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <h4>X-Axis Selection:</h4>
+            {{ form.x_axis_selection }}
+        </div>
+    </div>
+    <br>
+    <div class="row" id="level_1" style="display: none">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <h4>First Y-Axis selection:</h4>
+            {{ form.L1_y_axis_selection_1 }}
+        </div>
+         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <h4>Second Y-Axis selection:</h4>
+            {{ form.L1_y_axis_selection_2 }}
+        </div>
+    </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <div class="row" id="level_2" style="display: none">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <h4>First Y-Axis selection:</h4>
+            {{ form.L2_y_axis_selection_1 }}
+        </div>
+         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <h4>Second Y-Axis selection:</h4>
+            {{ form.L2_y_axis_selection_2 }}
+        </div>
+    </div>
+
+    <div class="row" id="level_3" style="display: none">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <h4>First Y-Axis selection:</h4>
+            {{ form.L3_y_axis_selection_1 }}
+        </div>
+         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <h4>Second Y-Axis selection:</h4>
+            {{ form.L3_y_axis_selection_2 }}
+        </div>
+    </div>
+
+    <br>
+
+    <div style="text-align: center;">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+
 </form>
 
 {% block script %}
     <script>
+
+        $("#level_1").show();
+
+        $('#id_level').change(function() {
+            if ($(this).val() === "L1") {
+                $("#level_1").show();
+                $("#level_2").hide();
+                $("#level_3").hide();
+            } else if ($(this).val() === "L2") {
+                $("#level_1").hide();
+                $("#level_2").show();
+                $("#level_3").hide();
+            } else if ($(this).val() === "L3") {
+                $("#level_1").hide();
+                $("#level_2").hide();
+                $("#level_3").show();
+            }
+        })
 
         var southWest = L.latLng(-45, -180),
         northEast = L.latLng(45, 180),

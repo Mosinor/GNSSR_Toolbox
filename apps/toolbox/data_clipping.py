@@ -140,8 +140,6 @@ def collect_level_1_data(start_date, end_date, location, level, keys, version):
 
                         link = link[:len(link)-1]
 
-                        # TODO: wget download
-                        print(link)
 
 
 #start_date = datetime.datetime(2021, 4, 1, 12)

@@ -4,18 +4,16 @@
 
 {% block script %}
 <script>
-    map_coordinates = {{ track_list }}
+    track_list = {{ track_list }}
     boundary = {{ boundary }}
 
-    buildMap(map_coordinates, boundary)
+    buildMap(track_list, boundary)
 
     function buildMap(tracks, boundary) {
         // Leaflet map
         var map = L.map('mapid', {
             preferCanvas: true,
         });
-
-        console.log(boundary[0], boundary[3]);
 
         map.setView([boundary[0], boundary[3]], 15);
 
@@ -38,16 +36,15 @@
         var overlayMaps = {};
 
         for (track = 0; track < tracks.length; track++) {
-            var layer_name = "Layer #: "+track
+            var layer_name = "Track ID: "+tracks[track][9]
 
             var i;
             var coordinates = L.layerGroup();
             var color = "#" + ((1<<24)*Math.random() | 0).toString(16)
 
             for (i = 0; i < tracks[track][0].length; i++) {
-                var metadata = "Point Meta"
-
-                L.circleMarker([tracks[track][0][i][0], tracks[track][1][i][0]], {color: color, radius: 1}).bindPopup(metadata).addTo(coordinates)
+                var metadata = "id: "+tracks[track][9]+" CYGNSS sat: "+tracks[track][4][i]+" DDM: "+tracks[track][5][i]+" GPS PRN: "+String(tracks[track][3][i])+"<hr> Lat: "+String(tracks[track][0][i])+"<hr> Lng: "+String(tracks[track][1][i])+"<hr> Timestamp: "+toHHMMSS(tracks[track][2][i]);
+                L.circleMarker([tracks[track][0][i], tracks[track][1][i]], {color: color, radius: 1}).bindPopup(metadata).addTo(coordinates)
             }
             overlayMaps[layer_name] = coordinates
         }
@@ -60,6 +57,102 @@
         rectangle.addTo(map);
 
     }
+
+    function toHHMMSS(time) {
+        var hours   = Math.floor(time / 3600);
+        var minutes = Math.floor((time - (hours * 3600)) / 60);
+        var seconds = time - (hours * 3600) - (minutes * 60);
+
+        if (hours   < 10) {hours   = "0"+hours;}
+        if (minutes < 10) {minutes = "0"+minutes;}
+        if (seconds < 10) {seconds = "0"+seconds;}
+        return hours + ':' + minutes + ':' + seconds;
+}
+
+    $('#tracks').change(function() {
+        track_list = {{ track_list }}
+        index = $(this).val()-1
+
+        lat = track_list[index][0]
+
+        lon = track_list[index][1]
+        time = track_list[index][2]
+
+        x_axis = track_list[index][6]
+        y_axis = track_list[index][7]
+        y_axis_2 = track_list[index][8]
+
+        console.log(y_axis_2)
+
+
+        id = track_list[index][9]
+
+        buildGraph(id)
+
+    });
+
+    function buildGraph(id) {
+
+        // Rebuild canvas to remove old data
+        $("canvas#trackChart").remove();
+        $("div.chartdiv").append('<canvas id="trackChart" width="941" height="941"></canvas>');
+
+        var track_chart = document.getElementById('trackChart').getContext('2d');
+
+        var options = {
+            scales: {
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        min: 0,    // minimum value will be 0
+                    }
+                }]
+            }
+        };
+
+        if (y_axis_2.length === 0) {
+            var datasets = [{
+                label: '{{ graph_selection.1 }}',
+                data: y_axis.flat(),
+                backgroundColor: ['rgba(46,77,168,0.2)'],
+                borderColor: ['rgb(0,63,186)'],
+                borderWidth: 1,
+            }]
+        } else {
+            var datasets = [{
+                label: '{{ graph_selection.1 }}',
+                            data: y_axis.flat(),
+                            backgroundColor: ['rgba(46,77,168,0.2)'],
+                            borderColor: ['rgb(0,63,186)'],
+                            borderWidth: 1,
+            },{
+                label: '{{ graph_selection.2 }}',
+                            data: y_axis_2.flat(),
+                            backgroundColor: ['rgba(175,158,57,0.2)'],
+                            borderColor: ['rgba(177,118,15,0.91)'],
+                            borderWidth: 1,
+            }]
+        }
+
+
+
+
+
+        var trackChart = new Chart(track_chart, {
+            type: 'line',
+                data: {
+                    labels: x_axis,
+                        datasets: datasets
+                    },
+        options: options,
+        })
+
+        document.getElementById("track_id").innerHTML = "You have selected track: "+id;
+    }
+
+
+
+
 </script>
 
 {% endblock script %}
@@ -68,18 +161,41 @@
 
     <div class="container clearfix">
         <div class="jumbotron">
-        <h1>Track Demonstration Tool</h1>
-        <p>
-            So you sent me here?
-        </p>
+            <h1>Track Demonstration Tool</h1>
+            <p>
+                So you sent me here?
+            </p>
 
-        <div>
-            <div style="height: 300px" id="mapid"></div>
-        </div>
+            <div>
+                <div style="height: 300px" id="mapid"></div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div>
+                    <h4>Select Track:</h4>
+                    <select class="custom-select" name="tracks" id="tracks">
+                        <option disabled selected value>Select track </option>
+                        {% for track in track_list %}
+                            <option value="{{ forloop.counter }}">
+                                {{ track|last }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <p id="track_id"> Please Select a track from the above list to inspect it further. </p>
+            </div>
+            <div class="chartdiv">
+                <canvas id="trackChart" width="941" height="941"></canvas>
+            </div>
+
 
 
         </div>
     </div> <!-- /container -->
 
 {% endblock content %}
-
