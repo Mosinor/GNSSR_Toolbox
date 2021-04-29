@@ -59,15 +59,11 @@ def track_demonstration(request):
                 track_list, url = collect_level_2_demo_data(date, location, start_time, end_time, level, version, graph_selection)
 
 
-            elif level == "L3":
-                y_axis_selection_1 = form.cleaned_data['L3_y_axis_selection_1']
-                y_axis_selection_2 = form.cleaned_data['L3_y_axis_selection_2']
-
-                graph_selection = [x_axis_selection, y_axis_selection_1, y_axis_selection_2]
+            base_url = "https://podaac-opendap.jpl.nasa.gov/opendap/hyrax/allData/cygnss/"+level+"/"+version+"/"+str(date.year) + "/" + str(date.timetuple().tm_yday).zfill(3)
 
             if any(track_list):
                 return render(request, "toolbox/track_demonstration_presentation.html",
-                              {'track_list': track_list, 'boundary': location, 'graph_selection': graph_selection})
+                              {'track_list': track_list, 'boundary': location, 'graph_selection': graph_selection, 'data_url':base_url})
             else:
                 error_message = "No tracks detected, please try another input."
 

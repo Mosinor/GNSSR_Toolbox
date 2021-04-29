@@ -10,20 +10,61 @@ class TrackDemoTool(forms.Form):
     date = forms.DateField(widget=DatePickerInput().start_of('event days'))
     start_time = forms.TimeField(widget=TimePickerInput().start_of('event days'))
     end_time = forms.TimeField(widget=TimePickerInput().start_of('event days'))
-    level = forms.ChoiceField(choices=[('L1', 'L1'), ('L2', 'L2'), ('L3', 'L3')])
+    level = forms.ChoiceField(choices=[('L1', 'L1'), ('L2', 'L2')])
     version = forms.ChoiceField(choices=[('v2.1', 'v2.1'), ('v3.0', 'v3.0')])
     x_axis_selection = forms.ChoiceField(choices=[('time', 'Time'), ('length', 'Length'), ('step', 'Step')])
 
-    L1_y_axis_variables = [('ddm_snr', 'DDM signal to noise ratio'), ('ddm_nbrcs', 'Normalized BRCS')]
-    L2_y_axis_variables = [('wind_speed', 'Retrieved wind speed'), ('wind_speed_uncertainty', 'Uncertainty in MV FDS wind speed')]
-    L3_y_axis_variables = [('wind_speed', 'Retrieved wind speed'), ('wind_speed_uncertainty', 'Wind speed uncertainty'), ('num_wind_speed_samples', 'Number of wind speed samples'), ('yslf_wind_speed', 'Young sea limited fetch wind speed'), ('yslf_wind_speed_uncertainty', 'Young sea limited fetch wind speed uncertainty'), ('num_yslf_wind_speed_samples', 'Number of young sea limited fetch wind speed samples'), ('mean_square_slope', 'Mean square slope'), ('mean_square_slope_uncertainty', 'Mean square slope uncertainty'), ('num_mss_samples', 'Number of mean square slope samples')]
+    L1_y_axis_variables = [('zenith_code_phase', 'Zenith signal code phase'),
+                           ('sp_ddmi_delay_correction', 'Correction to DDMI specular point delay'),
+                           ('sp_ddmi_dopp_correction', 'Correction to DDMI specular point Doppler'),
+                           ('sp_ddmi_dopp', 'DDMI Doppler at specular point'),
+                           ('prn_fig_of_merit', 'PRN selection figure of Merit'),
+                           ('tx_clk_bias', 'GPS transmitter clock bias'),
+                           ('sp_alt', 'Specular point altitude'),
+                           ('sp_inc_angle', 'Specular point incidence angle'),
+                           ('sp_rx_gain', 'Specular point Rx antenna gain'),
+                           ('gps_eirp', 'GPS effective isotropic radiated power'),
+                           ('gps_ant_gain_db_i', ' GPS SV transmit antenna gain'),
+                           ('direct_signal_snr', 'Zenith (direct) signal to noise ratio BRCS'),
+                           ('ddm_snr', 'DDM signal to noise ratio'),
+                           ('ddm_noise_floor', 'DDM noise floor'),
+                           ('inst_gain', 'Instrument gain'),
+                           ('lna_noise_figure', 'LNA noise figure'),
+                           ('rx_to_sp_range', 'Rx to specular point range'),
+                           ('tx_to_sp_range', 'Tx to specular point range'),
+                           ('radiometric_antenna_temp', 'Antenna Temperature (TA) at specular point'),
+                           ('fresnel_coeff', 'Fresnel power reflection coefficient at specular point'),
+                           ('ddm_nbrcs', 'Normalized BRCS'),
+                           ('ddm_les', 'Leading edge slope'),
+                           ('nbrcs_scatter_area', 'NBRCS scattering area'),
+                           ('les_scatter_area', 'LES scattering area'),
+                           ('ddm_brcs_uncert', 'DDM BRCS uncertainty'),
+                           ('quality_flags', 'Per-DDM quality flags')]
+
+    L2_y_axis_variables = [('sc_alt', 'Spacecraft altitude'),
+                           ('wind_speed', 'Retrieved wind speed in MV FDS'),
+                           ('fds_nbrcs_wind_speed', 'Fully Developed Sea retrieval of wind speed from NBRCS'),
+                           ('fds_les_wind_speed', 'Fully Developed Seas retrieval of wind speed from LES'),
+                           ('yslf_nbrcs_wind_speed', 'Young Seas/Limited Fetch retrieval of wind speed from NBRCS'),
+                           ('yslf_les_wind_speed', 'Young Seas/Limited Fetch retrieval of wind speed from LES'),
+                           ('yslf_nbrcs_wind_speed_uncertainty', 'Uncertainty in NBRCS YSLF wind speed'),
+                           ('yslf_les_wind_speed_uncertainty', 'Uncertainty in LES YSLF wind speed'),
+                           ('wind_speed_uncertainty', 'Uncertainty in MV FDS wind speed'),
+                           ('azimuth_angle', 'Azimuth angle'),
+                           ('mean_square_slope', 'Mean square slope'),
+                           ('mean_square_slope_uncertainty', 'Mean square slope uncertainty'),
+                           ('incidence_angle', 'Incidence angle'),
+                           ('nbrcs_mean', 'NBRCS mean'),
+                           ('les_mean', 'LES mean'),
+                           ('range_corr_gain', 'Range corrected gain'),
+                           ('fresnel_coeff', 'Fresnel power reflection coefficient'),
+                           ('num_ddms_utilized', 'Number of DDM utilized')]
 
     L1_y_axis_selection_1 = forms.ChoiceField(choices=L1_y_axis_variables)
     L1_y_axis_selection_2 = forms.ChoiceField(choices=[('none', 'None')]+L1_y_axis_variables)
     L2_y_axis_selection_1 = forms.ChoiceField(choices=L2_y_axis_variables)
     L2_y_axis_selection_2 = forms.ChoiceField(choices=[('none', 'None')] + L2_y_axis_variables)
-    L3_y_axis_selection_1 = forms.ChoiceField(choices=L3_y_axis_variables)
-    L3_y_axis_selection_2 = forms.ChoiceField(choices=[('none', 'None')] + L3_y_axis_variables)
+
 
     def clean(self):
         cleaned_data = super(TrackDemoTool, self).clean()
@@ -37,8 +78,6 @@ class TrackDemoTool(forms.Form):
         self.fields['L1_y_axis_selection_2'].widget.attrs.update({'class': 'custom-select'})
         self.fields['L2_y_axis_selection_1'].widget.attrs.update({'class': 'custom-select'})
         self.fields['L2_y_axis_selection_2'].widget.attrs.update({'class': 'custom-select'})
-        self.fields['L3_y_axis_selection_1'].widget.attrs.update({'class': 'custom-select'})
-        self.fields['L3_y_axis_selection_2'].widget.attrs.update({'class': 'custom-select'})
 
 
 keys_l1 = ['spacecraft_id', 'spacecraft_num', 'ddm_source', 'ddm_time_type_selector',
