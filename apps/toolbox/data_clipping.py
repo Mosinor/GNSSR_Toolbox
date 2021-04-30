@@ -69,14 +69,14 @@ def collect_level_3_data(start_date, end_date, location, level, keys, version):
 
 
 def collect_level_2_data(start_date, end_date, location, level, keys, version):
+    selected_dates = [start_date + datetime.timedelta(days=x) for x in
+                      range(0, (end_date.date() - start_date.date()).days)]
 
+    if not selected_dates:
+        pass
+    else:
+        pass
 
-    date = start_date
-    opendap_url = generate_url(date, level, version)[0]
-
-    dataset = open_url(opendap_url, output_grid=False)
-
-    print(dataset)
 
 
 def collect_level_1_data(start_date, end_date, location, level, keys, version):

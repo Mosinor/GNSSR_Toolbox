@@ -132,3 +132,9 @@ class DataClippingTool(forms.Form):
 
     def clean(self):
         cleaned_data = super(DataClippingTool, self).clean()
+
+    def __init__(self, *args, **kwargs):
+        super(DataClippingTool, self).__init__(*args, **kwargs)
+        self.fields['level'].widget.attrs.update({'class': 'custom-select'})
+        self.fields['version'].widget.attrs.update({'class': 'custom-select'})
+        self.fields['keys_level1'].widget.attrs.update({'class': 'list-group'})

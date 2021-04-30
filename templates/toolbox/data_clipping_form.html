@@ -14,32 +14,41 @@
         {% endfor %}
     </div>
 
-    <p>Selected coordinates:</p>
-    <label for="coordinate_a">Top Left: </label>
-    <input id="coordinate_a" type="text" name="coordinate_a">
-
-    <label for="coordinate_b">Bottom Right: </label>
-    <input id="coordinate_b" type="text" name="coordinate_b">
-
-    <hr>
-
-    <div class='input-group date' id='datetimepicker6'>
-        <p>
-            <h4>Start Date and Time:</h4>
-            <br>
-            {{ form.start_date }}
-            {% if form.start_date.help_text %}
-                <small class="form-text text-muted">{{ form.start_date.help_text }}</small>
-            {% endif %}
-            {% for error in form.start_date.errors %}
-                <p style="color: red">{{ error }}</p>
-            {% endfor %}
-        </p>
+    <i style="text-align: center">Enter coordinates by using the square tool on the map or write them in the box:</i> <br>
+    <br>
+    <div class="row">
+        <div class="input-group mb-3 date col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default"><b>Top Left</b></span>
+            </div>
+            <input id="coordinate_a" name="coordinate_a" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+        <div class="input-group mb-3 date col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default"><b>Bottom Right</b></span>
+            </div>
+            <input id="coordinate_b" name="coordinate_b" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
     </div>
 
-    <div class='input-group date' id='datetimepicker6'>
-        <p>
-            <h4>End Date and Time:</h4>
+    <hr>
+    <div class="row">
+
+        <div class='input-group date col-xs-12 col-sm-12 col-md-6 col-lg-6' id='datetimepicker6'>
+            <h4>Start date and time:</h4>
+                <br>
+                {{ form.start_date }}
+                {% if form.date.help_text %}
+                    <small class="form-text text-muted">{{ form.date.help_text }}</small>
+                {% endif %}
+                {% for error in form.date.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
+        </div>
+
+
+        <div class='input-group date col-xs-12 col-sm-12 col-md-6 col-lg-6' id='datetimepicker6'>
+            <h4>End  date and time:</h4>
             <br>
             {{ form.end_date }}
             {% if form.end_date.help_text %}
@@ -48,17 +57,28 @@
             {% for error in form.end_date.errors %}
                 <p style="color: red">{{ error }}</p>
             {% endfor %}
-        </p>
+        </div>
+
     </div>
 
+    <br>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <h4>Dataset Level:</h4>
+            {{ form.level }}
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <h4>Dataset Version:</h4>
+            {{ form.version }}
+        </div>
+    </div>
+
+    <br>
 
      <div>
-        <h4>Level:</h4>
-         {{ form.level }}
-
         <div id="level_1" style="display: none">
-            <h1>LEVEL 1 SELECTED</h1>
-            <br>
+            <h4>Select attributes:</h4>
             {{ form.keys_level1 }}
             {% if form.keys_level1.help_text %}
                 <small class="form-text text-muted">{{ form.keys_level1.help_text }}</small>
@@ -68,9 +88,10 @@
             {% endfor %}
         </div>
 
+
+
         <div id="level_2" style="display: none">
-            <h1>LEVEL 2 SELECTED</h1>
-            <br>
+            <h4>Select attributes:</h4>
             {{ form.keys_level2 }}
             {% if form.keys_level2.help_text %}
                 <small class="form-text text-muted">{{ form.keys_level2.help_text }}</small>
@@ -80,8 +101,7 @@
             {% endfor %}
         </div>
          <div id="level_3" style="display: none">
-            <h1>LEVEL 3 SELECTED</h1>
-             <br>
+            <h4>Select attributes:</h4>
             {{ form.keys_level3 }}
             {% if form.keys_level3.help_text %}
                 <small class="form-text text-muted">{{ form.keys_level3.help_text }}</small>
@@ -90,16 +110,14 @@
                 <p style="color: red">{{ error }}</p>
             {% endfor %}
         </div>
-
-        <h4>Version</h4>
-        {{ form.version }}
     </div>
 
     <br>
 
 
-
-    <button type="submit" class="btn btn-primary">Next</button>
+    <div style="text-align: center;">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
 </form>
 
 {% block script %}
@@ -123,50 +141,75 @@
         })
 
 
-        var map = L.map('id_grid-map', {drawControl: true}).setView([0, 0], 1);
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+        var southWest = L.latLng(-45, -180),
+        northEast = L.latLng(45, 180),
+        bounds = L.latLngBounds(southWest, northEast);
+
+
+        var map = L.map('id_grid-map', {
+            noWrap: true,
+            maxBounds: bounds,
+            maxZoom: 19,
+            minZoom: 3
+
+
+        }).setView([0, 0], 1);
+
+        const drawControl = new L.Control.Draw({
+                 draw: {polygon: false,
+                 polyline: false,
+                 marker: false,
+                 circle: false,
+                 rectangle: true}
+         });
+
+
+
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+          noWrap: true,
+          bounds: [
+            [-45, -180],
+            [45, 180]
+          ]
+        }).addTo(map);
+
+        var northBoundary = [
+            [45, -180],
+            [45, 180]
+        ];
+
+        var southBoundary = [
+            [-45, -180],
+            [-45, 180]
+        ];
+
+        L.polyline(northBoundary, {color: 'red'}).addTo(map);
+        L.polyline(southBoundary, {color: 'red'}).addTo(map);
+
+
+        this.map.addControl(drawControl)
+
+        this.map.on('draw:created', (e) => {
+            var bounds = [e.layer._bounds._northEast, e.layer._bounds._southWest]
+
+            CreateRectangle(bounds);
+
+        })
 
         var rect;
 
-        var markerA = L.marker([33, -72], {title: "Point A", draggable: true})
-		.addTo(map)
-		.on('dragend', function() {
-			var coord = String(markerA.getLatLng()).split(',');
-			var lat = coord[0].split('(');
-			var lng = coord[1].split(')');
-			document.getElementById("coordinate_a").value = ""+lat[1]+","+lng[0]+"";
-			CreateRectangle();
-		});
+        function CreateRectangle(bounds){
 
-        var markerB = L.marker([27, -60], {title: "Point B", draggable: true})
-        .addTo(map)
-        .on('dragend', function() {
-            var coord = String(markerB.getLatLng()).split(',');
-			var lat = coord[0].split('(');
-			var lng = coord[1].split(')');
-			document.getElementById("coordinate_b").value = ""+lat[1]+","+lng[0]+"";
-            CreateRectangle();
-		});
-
-        CreateRectangle();
-
-        function CreateRectangle(){
-            var bounds = [[Object.values(Object.values(markerA)[1])[0], Object.values(Object.values(markerA)[1])[1]],[Object.values(Object.values(markerB)[1])[0], Object.values(Object.values(markerB)[1])[1]]];
+            document.getElementById("coordinate_a").value = bounds[0].lat+","+bounds[0].lng;
+            document.getElementById("coordinate_b").value = bounds[1].lat+","+bounds[1].lng;
 
 
             if(rect)
             {
-                map.removeLayer(rect); // remove the old polygon...
+                map.removeLayer(rect); // remove the old rectangle...
             }
 
-            rect = L.rectangle(bounds, {color: 'blue', weight: 1}).on('click', function (e) {
-                // There event is event object
-                // there e.type === 'click'
-                // there e.lanlng === L.LatLng on map
-                // there e.target.getLatLngs() - your rectangle coordinates
-                // but e.target !== rect
-                console.info(e);
-            }).addTo(map);
+            rect = L.rectangle(bounds, {color: 'blue', weight: 1}).addTo(map);
 
         }
 
