@@ -32,6 +32,7 @@
             map_coordinates = data.map_coordinates
             skyplot_data = data.skyplot_data
 
+            console.log(intf_data)
 
             var i;
             for (i = 0; i < raw_data.length; i++) {
@@ -128,7 +129,6 @@
         Plotly.newPlot('skyplot', data, layout);
 
     };
-
 
 
     function set_raw_chart(satellite_num){

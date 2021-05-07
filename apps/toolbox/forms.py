@@ -104,7 +104,7 @@ keys_l1 = ['spacecraft_id', 'spacecraft_num', 'ddm_source', 'ddm_time_type_selec
            'brcs_ddm_sp_bin_dopp_col', 'ddm_brcs_uncert', 'quality_flags', 'raw_counts', 'power_digital',
            'power_analog', 'brcs', 'eff_scatter']
 
-keys_l2 = ['averaged_l1', 'ddm_source', 'spacecraft_id', 'spacecraft_num', 'prn_code', 'sv_num',
+keys_l2 = ['ddm_source', 'spacecraft_id', 'spacecraft_num', 'prn_code', 'sv_num',
            'antenna', 'sample_time', 'lat', 'lon', 'sc_lat', 'sc_lon', 'sc_alt', 'wind_speed', 'fds_nbrcs_wind_speed',
            'fds_les_wind_speed', 'yslf_nbrcs_wind_speed', 'yslf_les_wind_speed', 'yslf_nbrcs_wind_speed_uncertainty',
            'yslf_les_wind_speed_uncertainty', 'wind_speed_uncertainty', 'azimuth_angle', 'mean_square_slope',

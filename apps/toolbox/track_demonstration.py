@@ -146,7 +146,7 @@ def collect_level_2_demo_data(date, location, start_time, end_time, level, versi
     track_list = []
     cygnss_num_indeces = (np.where(np.diff(cygnss_num)))[0] + 1
     prn_indeces = (np.where(np.diff(prn)))[0] + 1
-    time_indices = (np.where(np.diff(time) > 60))[0] + 1
+    time_indices = (np.where(np.diff(time) > 300))[0] + 1
 
 
     # returns tracks based on time, CYGNSS sattellite and prn changes

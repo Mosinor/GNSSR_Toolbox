@@ -12,7 +12,7 @@
         {% endfor %}
     </div>
 
-    <i style="text-align: center">Enter coordinates by using the square tool on the map or write them in the box:</i> <br>
+    <i style="text-align: center">Enter coordinates by using the square tool on the map or write them in the box: [lat,lon]</i> <br>
     <br>
     <div class="row">
         <div class="input-group mb-3 date col-xs-12 col-sm-12 col-md-6 col-lg-6">
@@ -28,7 +28,6 @@
             <input id="coordinate_b" name="coordinate_b" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
         </div>
     </div>
-
 
 
     <hr>
@@ -211,8 +210,8 @@
 
         function CreateRectangle(bounds){
 
-            document.getElementById("coordinate_a").value = bounds[0].lat+","+bounds[0].lng;
-            document.getElementById("coordinate_b").value = bounds[1].lat+","+bounds[1].lng;
+            document.getElementById("coordinate_a").value = bounds[0].lat.toFixed(5)+","+bounds[0].lng.toFixed(5);
+            document.getElementById("coordinate_b").value = bounds[1].lat.toFixed(5)+","+bounds[1].lng.toFixed(5);
 
 
             if(rect)

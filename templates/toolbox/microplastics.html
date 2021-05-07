@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}User Input{% endblock %}
+
+{% block script %}
+<script>
+    var boundary = {{ boundary }}
+    var wind_speed_heat = {{ wind_speed_heat }}
+    var nbrcs_data = {{ nbrcs_data }}
+    var peak_data = {{ peak_list }}
+
+
+    buildMap(wind_speed_heat, boundary, nbrcs_data)
+
+    function buildMap(wind_speed_data, boundary, nbrcs_data) {
+        // Leaflet map
+        var map = L.map('mapid', {
+            preferCanvas: true,
+        });
+
+        map.setView([boundary[0], boundary[3]], 15);
+
+        southWest = L.latLng(boundary[2], boundary[1]);
+        northEast = L.latLng(boundary[0], boundary[3]);
+        bounds = L.latLngBounds(southWest, northEast);
+        map.setMaxBounds(bounds);
+
+        map.on('drag', function () {
+            map.panInsideBounds(bounds, {animate: false});
+        });
+
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            //noWrap: true,
+            //minZoom: 15,
+            //maxZoom: 19,
+        }).addTo(map);
+        var overlayMaps = {};
+
+        //var heat = L.heatLayer(wind_speed_data, {radius: 10, blur: 1, maxZoom:10, max: 20.0, gradient: { 0.0: 'green', 0.6: 'yellow', 1.0: 'red'}}).addTo(map)
+
+        var wind_speed_scatter = L.layerGroup();
+        for (i = 0; i < wind_speed_data.length; i++) {
+
+
+            L.circleMarker([wind_speed_data[i][0], wind_speed_data[i][1]], {
+                opacity: 0.1,
+                radius: wind_speed_data[i][2] * 1.5,
+                color: getColor_wind(wind_speed_data[i][2])
+            }).addTo(wind_speed_scatter)
+        }
+        overlayMaps["Wind Speed scatter"] = wind_speed_scatter
+
+        var nbrcs_peaks = L.layerGroup();
+
+        for (i = 0; i < peak_data.length; i++) {
+                L.circleMarker([peak_data[i][0], peak_data[i][1]], {
+                opacity: 0.1,
+                radius: peak_data[i][2]/100,
+                color: getColor_nbrcs(peak_data[i][2])
+            }).addTo(nbrcs_peaks);
+        }
+
+
+        overlayMaps["NBRCS Peaks"] = nbrcs_peaks
+
+
+        var nbrcs_scatter = L.layerGroup();
+
+        for (i = 0; i < nbrcs_data.length; i++) {
+            for (j = 0; j < nbrcs_data[i][0].length; j++) {
+                L.circleMarker([nbrcs_data[i][0][j], nbrcs_data[i][1][j]], {
+                opacity: 0.1,
+                radius: nbrcs_data[i][2][j]/100,
+                color: getColor_nbrcs(nbrcs_data[i][2][j])
+            }).addTo(nbrcs_scatter);
+            }
+        }
+
+        overlayMaps["NBRCS Scatter"] = nbrcs_scatter
+        L.control.layers(null, overlayMaps).addTo(map);
+
+        var rectOptions = {color: 'Red', weight: 1, fillColor: '#1e209e', fillOpacity: 0.1}
+        var rectangle = L.rectangle(bounds, rectOptions)
+        map.fitBounds(rectangle.getBounds());
+
+        rectangle.addTo(map);
+    }
+
+    function getColor_wind(d) {
+    return d > 30 ? '#ED2938' :
+           d > 15  ? '#B25F4A' :
+           d > 10  ? '#90945c' :
+           d > 5  ? '#3BCA6D' :
+           d > 0   ? '#00FF7F' :
+                      '#ffffff';
+    }
+
+    function getColor_nbrcs(d) {
+    return d > 250 ? '#FE0002' :
+           d > 150  ? '#A1015D' :
+           d > 100  ? '#63009E' :
+           d > 50  ? '#2A00D5' :
+           d > 0   ? '#0302FC' :
+                      '#ffffff';
+}
+
+
+
+
+</script>
+
+{% endblock script %}
+
+{% block content %}
+
+    <div class="container clearfix">
+        <div class="jumbotron">
+            <h1>Microplastic detection?</h1>
+
+            <div>
+                <div style="height: 300px" id="mapid"></div>
+            </div>
+
+        </div>
+    </div> <!-- /container -->
+
+{% endblock content %}

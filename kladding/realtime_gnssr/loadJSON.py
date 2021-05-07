@@ -6,7 +6,6 @@ import os
 import matplotlib.pyplot as plt
 
 
-
 def load_json_data(filepath):
     file_object = open(filepath, "r")
     json_content = file_object.read()
@@ -26,15 +25,25 @@ def ordinal_to_iso(time):
     return dt.strptime(time_string, "%Y-%m-%dT%H:%M:%S%z")
 
 
+def datetime_array_to_string(array):
+    string_array = []
+    for datetime_object in array:
+        string_array.append(datetime_object.strftime("%Y-%m-%dT%H:%M:%SZ"))
+
+    return string_array
+
+
 def collect_sea_levels():
     file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "sea_level.json")
     sea_level = load_json_data(file)
-    ssl_labels = []
+    ssl_timestamps = []
     levels = []
 
     for measure in sea_level:
-        ssl_labels.append(ordinal_to_iso(measure["time"]))
+        ssl_timestamps.append(ordinal_to_iso(measure["time"]))
         levels.append(measure["sea_level"])
+
+    ssl_labels = datetime_array_to_string(ssl_timestamps)
 
     step = int(np.floor(len(levels)/100))
 
@@ -44,12 +53,14 @@ def collect_sea_levels():
 def collect_sea_roughness():
     file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "sea_roughness.json")
     sea_roughness = load_json_data(file)
-    ssr_labels = []
+    ssr_timestamps = []
     roughness = []
 
     for measure in sea_roughness:
-        ssr_labels.append(ordinal_to_iso(measure["time"]))
+        ssr_timestamps.append(ordinal_to_iso(measure["time"]))
         roughness.append(measure["roughness"]*100)
+
+    ssr_labels = datetime_array_to_string(ssr_timestamps)
 
     step = int(np.floor(len(roughness) / 100))
 
@@ -85,22 +96,12 @@ def collect_sat_info():
             separate_satellites.append(atcho[0])
             separate_satellites.append(atcho[1])
 
-
             event = False
         else:
             separate_satellites.append(satellite)
 
-
-
-
     table_info = []
     elevation_data = []
-
-
-
-
-
-
 
     for satellite in separate_satellites:
         prn = int(satellite[0][0])
@@ -109,19 +110,17 @@ def collect_sat_info():
         azimuth_min = str(round(min(satellite[:, 2]), 1)) + "°"
         azimuth_max = str(round(max(satellite[:, 2]), 1)) + "°"
         table_info.append([prn, elevation_min, elevation_max, azimuth_min, azimuth_max])
-        elevation_data.append([prn, satellite[:, 1], satellite[:, 2]])
-
+        elevation_data.append([prn, satellite[:, 1].tolist(), satellite[:, 2].tolist()])
 
     coordinates = []
     for satellite in separate_satellites:
         prn = int(satellite[0][0])
         lat = satellite[:, 4]
         lon = satellite[:, 5]
-        time = satellite[:, 3]
+        time = datetime_array_to_string(satellite[:, 3])
         elevation = satellite[:, 2]
         azimuth = satellite[:, 1]
-        coordinates.append([prn, lat, lon, time, elevation, azimuth])
-
+        coordinates.append([prn, lat.tolist(), lon.tolist(), time, elevation.tolist(), azimuth.tolist()])
 
     return table_info, coordinates, elevation_data
 
@@ -138,11 +137,33 @@ def raw_measure_info():
                          measure["Cpo_raw_q"], measure["Xpo_raw_I"], measure["Xpo_raw_q"], time])
 
     # Split the data into separate arrays for satellites by PRN number
-    raw_data = np.split(np.array(raw_data), np.where(np.diff(np.array(raw_data)[:, 0]))[0]+1)
+    raw_data_prn = np.split(np.array(raw_data), np.where(np.diff(np.array(raw_data)[:, 0]))[0]+1)
+
+    # Also check for big difference in timestamp
+    separate_satellites = []
+    event = False
+    a = 0
+    for satellite in raw_data_prn:
+
+        split = []
+        for t in range(0, len(satellite) - 1):
+            if satellite[t + 1][7] - satellite[t][7] > timedelta(minutes=1):
+                event = True
+                split.append(t+1)
+        if event:
+            atcho = np.split(satellite, split)
+
+            separate_satellites.append(atcho[0])
+            separate_satellites.append(atcho[1])
+
+            event = False
+        else:
+            separate_satellites.append(satellite)
 
     raw_chart_data = []
 
-    for satellite in raw_data:
+    for satellite in separate_satellites:
+
         prn = int(satellite[0][0])
         Mst_raw_I = satellite[:, 1]
         Mst_raw_q = satellite[:, 2]
@@ -150,9 +171,9 @@ def raw_measure_info():
         Cpo_raw_q = satellite[:, 4]
         Xpo_raw_I = satellite[:, 5]
         Xpo_raw_q = satellite[:, 6]
-        time = satellite[:, 7]
+        time = datetime_array_to_string(satellite[:, 7])
 
-        raw_chart_data.append([prn, Mst_raw_I, Mst_raw_q, Cpo_raw_I, Cpo_raw_q, Xpo_raw_I, Xpo_raw_q, time])
+        raw_chart_data.append([prn, Mst_raw_I.tolist(), Mst_raw_q.tolist(), Cpo_raw_I.tolist(), Cpo_raw_q.tolist(), Xpo_raw_I.tolist(), Xpo_raw_q.tolist(), time])
 
     return raw_chart_data
 
@@ -169,20 +190,53 @@ def interferometric_fringe_info():
                          measure["Cpo_int_q"], measure["Xpo_int_I"], measure["Xpo_int_q"], time])
 
     # Split the data into separate arrays for satellites by PRN number
-    intf_data = np.split(np.array(intf_data), np.where(np.diff(np.array(intf_data)[:, 0]))[0]+1)
+    intf_data_prn = np.split(np.array(intf_data), np.where(np.diff(np.array(intf_data)[:, 0]))[0]+1)
+
+    # Also check for big difference in timestamp
+    separate_satellites = []
+    event = False
+    a = 0
+    for satellite in intf_data_prn:
+
+        split = []
+        for t in range(0, len(satellite) - 1):
+            if satellite[t + 1][7] - satellite[t][7] > timedelta(minutes=1):
+                event = True
+                split.append(t+1)
+        if event:
+            atcho = np.split(satellite, split)
+
+            separate_satellites.append(atcho[0])
+            separate_satellites.append(atcho[1])
+
+            event = False
+        else:
+            separate_satellites.append(satellite)
 
     intf_chart_data = []
 
-    for satellite in intf_data:
+    for satellite in separate_satellites:
+
         prn = int(satellite[0][0])
         Mst_int_I = satellite[:, 1]
+        Mst_int_I[Mst_int_I == None] = 0
         Mst_int_q = satellite[:, 2]
-        Cpo_int_I = satellite[:, 3]
-        Cpo_int_q = satellite[:, 4]
-        Xpo_int_I = satellite[:, 5]
-        Xpo_int_q = satellite[:, 6]
-        time = satellite[:, 7]
+        Mst_int_q[Mst_int_q == None] = 0
 
-        intf_chart_data.append([prn, Mst_int_I, Mst_int_q, Cpo_int_I, Cpo_int_q, Xpo_int_I, Xpo_int_q, time])
+        Cpo_int_I = satellite[:, 3]
+        Cpo_int_I[Cpo_int_I == None] = 0
+
+        Cpo_int_q = satellite[:, 4]
+        Cpo_int_q[Cpo_int_q == None] = 0
+
+        Xpo_int_I = satellite[:, 5]
+        Xpo_int_I[Xpo_int_I == None] = 0
+
+        Xpo_int_q = satellite[:, 6]
+        Xpo_int_q[Xpo_int_q == None] = 0
+
+        time = datetime_array_to_string(satellite[:, 7])
+
+        intf_chart_data.append([prn, Mst_int_I.tolist(), Mst_int_q.tolist(), Cpo_int_I.tolist(), Cpo_int_q.tolist(), Xpo_int_I.tolist(), Xpo_int_q.tolist(), time])
 
     return intf_chart_data
