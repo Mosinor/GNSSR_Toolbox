@@ -34,7 +34,7 @@
     <p>Database parameters:</p>
     <div class="row">
 
-        <div class='input-group date col-xs-12 col-sm-12 col-md-4 col-lg-4' id='datetimepicker6'>
+        <div class='input-group date col-xs-12 col-sm-12 col-md-6 col-lg-6' id='datetimepicker6'>
             <h4>Date:</h4>
                 <br>
                 {{ form.date }}
@@ -46,44 +46,21 @@
                 {% endfor %}
         </div>
 
-
-        <div class='input-group date col-xs-12 col-sm-12 col-md-4 col-lg-4' id='datetimepicker6'>
-            <h4>Start time:</h4>
-            <br>
-            {{ form.start_time }}
-            {% if form.start_time.help_text %}
-                <small class="form-text text-muted">{{ form.start_time.help_text }}</small>
-            {% endif %}
-            {% for error in form.start_time.errors %}
-                <p style="color: red">{{ error }}</p>
-            {% endfor %}
-        </div>
-
-        <div class='input-group date col-xs-12 col-sm-12 col-md-4 col-lg-4' id='datetimepicker6'>
-                <h4>End time:</h4>
-                <br>
-                {{ form.end_time }}
-                {% if form.end_time.help_text %}
-                    <small class="form-text text-muted">{{ form.end_time.help_text }}</small>
-                {% endif %}
-                {% for error in form.end_time.errors %}
-                    <p style="color: red">{{ error }}</p>
-                {% endfor %}
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <h4>Dataset Level:</h4>
+            {{ form.level }}
         </div>
     </div>
 
     <br>
 
     <div class="row">
-        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <h4>Dataset Level:</h4>
-            {{ form.level }}
-        </div>
-        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <h4>Dataset Version:</h4>
             {{ form.version }}
         </div>
-         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <h4>X-Axis Selection:</h4>
             {{ form.x_axis_selection }}
         </div>

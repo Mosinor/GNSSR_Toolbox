@@ -8,11 +8,12 @@
     var wind_speed_heat = {{ wind_speed_heat }}
     var nbrcs_data = {{ nbrcs_data }}
     var peak_data = {{ peak_list }}
+    var era5_data = {{ era5_wind }}
 
 
-    buildMap(wind_speed_heat, boundary, nbrcs_data)
+    buildMap(wind_speed_heat, boundary, nbrcs_data, era5_data)
 
-    function buildMap(wind_speed_data, boundary, nbrcs_data) {
+    function buildMap(wind_speed_data, boundary, nbrcs_data, era5_data) {
         // Leaflet map
         var map = L.map('mapid', {
             preferCanvas: true,
@@ -22,6 +23,8 @@
 
         southWest = L.latLng(boundary[2], boundary[1]);
         northEast = L.latLng(boundary[0], boundary[3]);
+
+
         bounds = L.latLngBounds(southWest, northEast);
         map.setMaxBounds(bounds);
 
@@ -76,6 +79,17 @@
             }
         }
 
+        var wind_speed_era5 = L.layerGroup();
+        for (i = 0; i < era5_data.length; i++) {
+
+            L.circleMarker([era5_data[i][0], era5_data[i][1]], {
+                opacity: 0.1,
+                radius: era5_data[i][2] * 1.5,
+                color: getColor_wind(era5_data[i][2])
+            }).addTo(wind_speed_era5)
+        }
+        overlayMaps["ERA 5 Wind Speed"] = wind_speed_era5
+
         overlayMaps["NBRCS Scatter"] = nbrcs_scatter
         L.control.layers(null, overlayMaps).addTo(map);
 
@@ -89,9 +103,9 @@
     function getColor_wind(d) {
     return d > 30 ? '#ED2938' :
            d > 15  ? '#B25F4A' :
-           d > 10  ? '#90945c' :
-           d > 5  ? '#3BCA6D' :
-           d > 0   ? '#00FF7F' :
+           d > 10  ? '#cbea92' :
+           d > 5  ? '#1e9245' :
+           d > 0   ? '#0037ff' :
                       '#ffffff';
     }
 
@@ -118,7 +132,7 @@
             <h1>Microplastic detection?</h1>
 
             <div>
-                <div style="height: 300px" id="mapid"></div>
+                <div style="height: 800px" id="mapid"></div>
             </div>
 
         </div>

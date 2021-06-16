@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}User Input{% endblock %}
+
+{% block script %}
+<script>
+    var peak_data = {{ peak_list }}
+
+        console.log(peak_data)
+    buildMap()
+
+    function buildMap() {
+        // Leaflet map
+        southWest = L.latLng(-45, -180),
+        northEast = L.latLng(45, 180),
+        bounds = L.latLngBounds(southWest, northEast);
+
+
+        var map = L.map('mapid', {
+            noWrap: true,
+            maxBounds: bounds,
+            maxZoom: 19,
+            minZoom: 2,
+            maxBoundsViscosity: 1.0
+
+        }).setView([0, 0], 1);
+
+        map.on('drag', function() {
+            map.panInsideBounds(bounds, { animate: false });
+        });
+
+
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            //noWrap: true,
+            //minZoom: 15,
+            //maxZoom: 19,
+        }).addTo(map);
+        var overlayMaps = {};
+
+        //var heat = L.heatLayer(wind_speed_data, {radius: 10, blur: 1, maxZoom:10, max: 20.0, gradient: { 0.0: 'green', 0.6: 'yellow', 1.0: 'red'}}).addTo(map)
+
+
+        var nbrcs_peaks = L.layerGroup();
+
+        for (i = 0; i < peak_data.length; i++) {
+                L.circleMarker([peak_data[i][0], peak_data[i][1]], {
+                opacity: 0.1,
+                radius: peak_data[i][2]/10,
+                color: getColor_nbrcs(peak_data[i][2])
+            }).addTo(nbrcs_peaks);
+        }
+
+
+        overlayMaps["NBRCS Peaks"] = nbrcs_peaks
+
+        L.control.layers(null, overlayMaps).addTo(map);
+    }
+
+    function getColor_nbrcs(d) {
+    return d > 250 ? '#FE0002' :
+           d > 150  ? '#A1015D' :
+           d > 100  ? '#bb8a38' :
+           d > 50  ? '#dc6a15' :
+           d > 0   ? '#39840d' :
+                      '#ffffff';
+}
+
+
+
+
+
+</script>
+
+{% endblock script %}
+
+{% block content %}
+
+    <div class="container clearfix">
+        <div class="jumbotron">
+            <h1>Microplastic detection?</h1>
+
+            <div>
+                <div style="height: 800px" id="mapid"></div>
+            </div>
+
+        </div>
+    </div> <!-- /container -->
+
+{% endblock content %}

@@ -24,6 +24,7 @@
     <orderEntry type="library" name="leaflet" level="application" />
     <orderEntry type="library" name="plotly-latest" level="application" />
     <orderEntry type="library" name="leaflet.heat" level="application" />
+    <orderEntry type="library" name="jquery" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />

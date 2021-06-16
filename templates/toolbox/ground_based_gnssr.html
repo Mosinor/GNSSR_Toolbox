@@ -46,8 +46,6 @@
         }
 
         var layout = {
-            title: 'Skyplot',
-
             font: {
                 family: 'Arial, sans-serif;',
                 size: 12,
@@ -506,6 +504,29 @@
 
 
 {% block content %}
+<style>
+    .tableFixHead {
+        overflow-y: auto;
+        height: 400px;
+    }
+    .tableFixHead thead th {
+        position: sticky;
+        top: -5px;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th,
+    td {
+        padding: 8px 16px;
+        border: 1px solid #ccc;
+    }
+    th {
+    background: #eee;
+    }
+</style>
+
 <div class="container">
     <h1 style="text-align: center">GNSS-R Sea Surface Products</h1> <hr>
     <div class="row">
@@ -530,6 +551,28 @@
             <div style="height: 450px" id="mapid"></div>
         </div>
     </div>
+    <hr>
+    <div class="row tableFixHead">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>PRN</th>
+                            <th style="text-align: center" colspan=2>Elevation angle range</th>
+                            <th style="text-align: center" colspan=2>Azimuth angle range</th>
+                        </tr>
+                    </thead>
+                    <tbody class="scrollable">
+                        {% for satellite in table_data %}
+                            <tr>
+                                {% for measure in satellite %}
+                                    <td>{{ measure }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
 
     <h1 style="text-align: center">Track inspection</h1> <hr>
 
