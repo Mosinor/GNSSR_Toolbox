@@ -15,7 +15,7 @@ def collect_level_1_demo_data(date, location, level, version, graph_variables):
 
     track_list = []
 
-    for satellite_number in range(1):
+    for satellite_number in range(8):
         print("Starting scan for satellite: " + str(satellite_number))
         try:
             lat_lon_dataset = open_url(opendap_url[satellite_number] + "?sp_lat,sp_lon", output_grid=False)
@@ -23,7 +23,7 @@ def collect_level_1_demo_data(date, location, level, version, graph_variables):
             print("anomaly in link")
             break
 
-        for ddm in range(1):
+        for ddm in range(4):
             print("ddm: " + str(ddm))
             sp_lat = np.array(lat_lon_dataset.sp_lat[:, ddm])
             sp_lon = np.array(lat_lon_dataset.sp_lon[:, ddm])

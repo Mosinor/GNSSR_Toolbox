@@ -11,8 +11,6 @@ data_list = []
 num_peaks = 0
 days = 0
 
-
-
 # March 2017 is from 18 to 31, so it need a separate input window
 
 for day in range(17, 31):
