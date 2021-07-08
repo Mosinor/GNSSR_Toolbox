@@ -8,8 +8,6 @@ class TrackDemoTool(forms.Form):
     coordinate_a = forms.CharField()
     coordinate_b = forms.CharField()
     date = forms.DateField(widget=DatePickerInput().start_of('event days'))
-    start_time = forms.TimeField(widget=TimePickerInput().start_of('event days'), required=False)
-    end_time = forms.TimeField(widget=TimePickerInput().start_of('event days'), required=False)
     level = forms.ChoiceField(choices=[('L1', 'L1'), ('L2', 'L2')])
     version = forms.ChoiceField(choices=[('v2.1', 'v2.1'), ('v3.0', 'v3.0')])
     x_axis_selection = forms.ChoiceField(choices=[('time', 'Time'), ('length', 'Length'), ('step', 'Step')])

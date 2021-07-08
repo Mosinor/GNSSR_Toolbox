@@ -26,9 +26,6 @@ def track_demonstration(request):
             location = [max(lats), min(lons), min(lats), max(lons)]
 
             date = form.cleaned_data['date']
-            start_time = clock_to_seconds(form.cleaned_data['start_time'])
-            end_time = clock_to_seconds(form.cleaned_data['end_time'])
-
             level = form.cleaned_data['level']
             version = form.cleaned_data['version']
 
@@ -48,7 +45,7 @@ def track_demonstration(request):
 
                 graph_selection = [x_axis_selection, y_axis_selection_1, y_axis_selection_2]
 
-                track_list, url = collect_level_1_demo_data(date, location, start_time, end_time, level, version, graph_selection)
+                track_list, url = collect_level_1_demo_data(date, location, level, version, graph_selection)
 
             # Level 2 selection:
             elif level == "L2":

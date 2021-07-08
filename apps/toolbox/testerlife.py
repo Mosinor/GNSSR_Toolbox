@@ -13,6 +13,7 @@ from scipy import signal, interpolate
 from scipy.ndimage.filters import uniform_filter1d
 import calendar
 
+
 # Fixed the axis and interpolated the data
 def interpolate_track(track):
     # X-axis should be along track distance
@@ -29,9 +30,6 @@ def interpolate_track(track):
 
     # Y-axis is NBRCS in log10 scale
     y = 10*np.log(track[2])
-
-
-
 
     t, dt = np.linspace(0, x[-1], len(x), retstep=True)
     t0 = np.arange(0, len(x))
@@ -121,8 +119,8 @@ def find_peaks(track):
 
     # X-axis should be along track distance
     geod = pyproj.Geod(ellps='WGS84')
-    lats = track[1]
-    lons = track[0]
+    lats = track[0]
+    lons = track[1]
 
     distance = 0
     distances = [0]
@@ -168,11 +166,20 @@ def plot_track_nbrcs(track):
 
     peak_index, properties = find_track_peaks(smoothened_y, 1, 5)
 
-    plt.scatter(x, y, alpha=0.5, color='black', marker='o')
+    plt.title("NBRCS along track")
+    plt.xlabel("Track distance [m]")
+    plt.ylabel("NBRCS reading [log10 scale]")
 
-    plt.plot(x, smoothened_y, color='red')
+    plt.scatter(x, y, alpha=0.5, color='#5e3c99', marker='o', zorder=2, label="Raw NBRCS")
 
-    plt.scatter(x[peak_index], smoothened_y[peak_index], color='yellow', marker='x')
+    plt.plot(x, smoothened_y, color='#fdb863', zorder=3, label="Smoothened NBRCS")
+
+    plt.scatter(x[peak_index], smoothened_y[peak_index], color='#e66101', marker='x', zorder=4, label="Peak")
+
+    ax = plt.axes()
+    ax.set_facecolor("#b2abd2")
+
+
 
     plt.show()
 
@@ -255,10 +262,13 @@ def process_track_peak_list(track):
     return peak_list
 
 
-'''
-# Use this if you want to plot NBRCS tracks to check
 
-file = open('../Track_separation/2021-04/track_list2021_april_4.txt', 'rb')
+# Use this if you want to plot NBRCS tracks to check
+date = datetime.date(2020, 4, 1)
+
+file = open('D:/GNSS-R Data/Track_separation/' + str(date.year) + '-' + str('%02d' % date.month) + '/track_list' + str(
+    date.year) + '_' + date.strftime("%B").lower() + '_' + str(date.day + 1) + '.txt', 'rb')
+
 nbrcs_tracks = pickle.load(file)
 file.close()
 
@@ -269,7 +279,7 @@ for track in nbrcs_tracks[0:100]:
     if len(track_good[0]) > 50:
         plot_track_nbrcs(track_no_null)
 
-'''
+
 
 # Use this to process
 

@@ -10,9 +10,8 @@ def consecutive(data, stepsize=1):
     return np.split(data, np.where(np.diff(data) != stepsize)[0]+1)
 
 
-def collect_level_1_demo_data(date, location, start_time, end_time, level, version, graph_variables):
+def collect_level_1_demo_data(date, location, level, version, graph_variables):
     opendap_url = generate_url(date, level, version)
-    print(location)
 
     track_list = []
 
@@ -24,13 +23,14 @@ def collect_level_1_demo_data(date, location, start_time, end_time, level, versi
             print("anomaly in link")
             break
 
-        for ddm in range(4):
+        for ddm in range(1):
             print("ddm: " + str(ddm))
             sp_lat = np.array(lat_lon_dataset.sp_lat[:, ddm])
             sp_lon = np.array(lat_lon_dataset.sp_lon[:, ddm])
             a, b = (np.where(sp_lon > 180))
             sp_lon[a] -= 360
 
+            # Return the indices for points within the selection area
             indices, zero_array = np.where(
                 (sp_lat[:] < location[0])
                 & (sp_lon[:] > location[1])
@@ -80,8 +80,6 @@ def collect_level_1_demo_data(date, location, start_time, end_time, level, versi
                     track_list.append([lat, lon, ddm_timestamp_utc_list, prn_code_list, (np.ones(len(lat))*satellite_number).flatten().tolist(), (np.ones(len(lat))*ddm).flatten().tolist(), x_axis, y_axis_list, y_axis_2_list, track_id])
             else:
                 pass
-
-        print(track_list)
 
     return track_list, opendap_url
 

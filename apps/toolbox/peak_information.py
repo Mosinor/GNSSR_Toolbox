@@ -13,12 +13,12 @@ import csv
 header = ['lat', 'lon', 'ddm_nbrcs', 'timestamp_utc', 'prominence', 'width', 'wind_speed', 'date']
 
 
-for month in [12, 11, 10, 9, 8, 7]:
-    year = 2019
+for month in [3]:
+    year = 2017
 
     days_in_month = calendar.monthrange(year, month)[1]
 
-    for day in range(0, days_in_month):
+    for day in range(17, days_in_month):
 
         date = datetime.date(year, month, day+1)
 
