@@ -62,6 +62,10 @@ INSTALLED_APPS = [
     'apps.toolbox',
 ]
 
+BOOTSTRAP4 = {
+    'include_jquery': True,
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

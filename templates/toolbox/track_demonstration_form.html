@@ -1,6 +1,7 @@
 {% load leaflet_tags %}
 {% leaflet_js plugins="forms" %}
 {% leaflet_css plugins="forms" %}
+
 <form method="post" novalidate>
     {{ form.media }}
     {% csrf_token %}
