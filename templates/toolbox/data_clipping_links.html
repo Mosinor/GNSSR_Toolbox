@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Tool Selection{% endblock %}
+
+{% block content %}
+
+    <div class="container clearfix">
+        <div class="jumbotron">
+            <h1>Data Clipping Tool</h1>
+
+            {% for link in links %}
+                <a href="{{ link }}">{{ link }}</a>
+                <hr>
+            {% endfor %}
+
+        </div>
+    </div> <!-- /container -->
+
+{% endblock content %}
+
+

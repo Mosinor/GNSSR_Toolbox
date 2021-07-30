@@ -99,17 +99,24 @@ def data_clipping(request):
                 v = "v3.0"
 
             keys = []
+            links = []
             if level == "1":
                 keys = form.cleaned_data['keys_level1']
-                collect_level_1_data(start_date, end_date, location, "L1", keys, v)
+                links = collect_level_1_data(start_date, end_date, location, "L1", keys, v)
 
             elif level == "2":
                 keys = form.cleaned_data['keys_level2']
-                collect_level_2_data(start_date, end_date, location, "L2", keys, v)
+                links = collect_level_2_data(start_date, end_date, location, "L2", keys, v)
 
             elif level == "3":
                 keys = form.cleaned_data['keys_level3']
-                collect_level_3_data(start_date, end_date, location, "L3", keys, v)
+                links = collect_level_3_data(start_date, end_date, location, "L3", keys, v)
+
+            if not links:
+                print("error - no links found")
+            else:
+                return render(request, "toolbox/data_clipping_links.html", {'links': links})
+
 
     else:
         form = DataClippingTool()

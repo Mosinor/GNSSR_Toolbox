@@ -11,6 +11,7 @@ def consecutive(data, stepsize=1):
 
 
 def collect_level_3_data(start_date, end_date, location, level, keys, version):
+    links = []
     selected_dates = [start_date + datetime.timedelta(days=x) for x in
                       range(0, (end_date.date() - start_date.date()).days)]
 
@@ -32,8 +33,7 @@ def collect_level_3_data(start_date, end_date, location, level, keys, version):
             opendap_url += geogrid
             j += 1
 
-        # TODO: wget download
-        print(opendap_url)
+        links.append(opendap_url)
 
     else:
         selected_dates.append(end_date)
@@ -64,11 +64,12 @@ def collect_level_3_data(start_date, end_date, location, level, keys, version):
                 j += 1
             i += 1
 
-            # TODO: wget download
-            print(opendap_url)
+            links.append(opendap_url)
 
+    return links
 
 def collect_level_2_data(start_date, end_date, location, level, keys, version):
+    links = []
     selected_dates = [start_date + datetime.timedelta(days=x) for x in
                       range(0, (end_date.date() - start_date.date()).days)]
 
@@ -133,11 +134,14 @@ def collect_level_2_data(start_date, end_date, location, level, keys, version):
                     pass
                     link += str(variable) + sample + "[0:][0:1:4][0:1:3],"
 
-            link = link[:len(link) - 1]
-            print(link)
+            links.append(link[:len(link) - 1])
+
+    return links
 
 
 def collect_level_1_data(start_date, end_date, location, level, keys, version):
+    links = []
+
     selected_dates = [start_date + datetime.timedelta(days=x) for x in
                       range(0, (end_date.date() - start_date.date()).days)]
 
@@ -195,4 +199,5 @@ def collect_level_1_data(start_date, end_date, location, level, keys, version):
                             elif len(shape_dataset[str(variable)].shape) == 4:
                                 link += str(variable) + sample + "[" + str(ddm) + "][0:1:16][0:1:10],"
 
-                        link = link[:len(link)-1]
+                        links.append(link[:len(link)-1])
+    return links
