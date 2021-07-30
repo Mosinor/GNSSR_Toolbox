@@ -63,6 +63,8 @@ def track_demonstration(request):
                               {'track_list': track_list, 'boundary': location, 'graph_selection': graph_selection, 'data_url':base_url})
             else:
                 error_message = "No tracks detected, please try another input."
+        else:
+            print(form.errors)
 
     else:
         form = TrackDemoTool()
