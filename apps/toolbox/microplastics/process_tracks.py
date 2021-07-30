@@ -257,6 +257,7 @@ def process_track_peak_list(track):
     if len(track[0]) > 50:
         peak_list = remove_peaks_on_land(find_peaks(track))
         find_nearest_peak_wind(peak_list, date, wind_data)
+        # The second variable in remove_high_wind_peaks is the wind treshold
         peak_list = remove_high_wind_peaks(peak_list, 5)
 
     return peak_list
@@ -289,7 +290,6 @@ for month in [3]:
     for day in range(17, calendar.monthrange(year, month)[1]):
         complete_peak_list = []
         date = datetime.date(year, month, day+1)
-        print(date)
 
         file = open('D:/GNSS-R Data/Track_separation/'+str(date.year)+'-'+str('%02d' % date.month)+'/track_list' + str(date.year) + '_' + date.strftime("%B").lower() + '_' + str(day + 1) + '.txt', 'rb')
         nbrcs_tracks = pickle.load(file)
@@ -318,4 +318,3 @@ for month in [3]:
         file = open('D:/GNSS-R Data/Peak_list/'+str(date.year)+'-'+str('%02d' % date.month)+'/Complete_peak_list_'+str(date.year)+'_'+date.strftime("%B").lower()+'_'+str(day+1)+'.txt', 'wb')
         pickle.dump(complete_peak_list, file)
         file.close()
-        print("fin")

@@ -1,3 +1,6 @@
+# This file collects the tracks from the CYGNSS opendap database, and stores lats, lon, nbrcs, timestamp and quality flags for each date.
+
+
 import datetime
 import numpy as np
 import time
@@ -53,9 +56,9 @@ def collect_tracks(date):
 
 year = 2017
 
-for month in [3]:
-    print(calendar.monthrange(year, month)[1])
-    for day in range(17, calendar.monthrange(year, month)[1]):
+for month in [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]:
+
+    for day in range(0, calendar.monthrange(year, month)[1]):
         date = datetime.date(year, month, day+1)
         print(date)
 

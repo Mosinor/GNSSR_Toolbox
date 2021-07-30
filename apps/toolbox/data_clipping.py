@@ -138,7 +138,6 @@ def collect_level_2_data(start_date, end_date, location, level, keys, version):
 
     return links
 
-
 def collect_level_1_data(start_date, end_date, location, level, keys, version):
     links = []
 
