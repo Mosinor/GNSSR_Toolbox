@@ -32,12 +32,26 @@
             </div>
             <input id="coordinate_a" name="coordinate_a" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
         </div>
+        {% if form.coordinate_a.help_text %}
+            <small class="form-text text-muted">{{ form.coordinate_a.help_text }}</small>
+        {% endif %}
+        {% for error in form.coordinate_a.errors %}
+            <p style="color: red">{{ error }}</p>
+        {% endfor %}
+
+
         <div class="input-group mb-3 date col-xs-12 col-sm-12 col-md-6 col-lg-6">
             <div class="input-group-prepend">
                 <span class="input-group-text" id="inputGroup-sizing-default"><b>Bottom Right</b></span>
             </div>
             <input id="coordinate_b" name="coordinate_b" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
         </div>
+        {% if form.coordinate_b.help_text %}
+            <small class="form-text text-muted">{{ form.coordinate_b.help_text }}</small>
+        {% endif %}
+        {% for error in form.coordinate_b.errors %}
+            <p style="color: red">{{ error }}</p>
+        {% endfor %}
     </div>
 
     <hr>
@@ -50,7 +64,7 @@
                 {% if form.date.help_text %}
                     <small class="form-text text-muted">{{ form.date.help_text }}</small>
                 {% endif %}
-                {% for error in form.date.errors %}
+                {% for error in form.start_date.errors %}
                     <p style="color: red">{{ error }}</p>
                 {% endfor %}
         </div>
@@ -96,8 +110,6 @@
                 <p style="color: red">{{ error }}</p>
             {% endfor %}
         </div>
-
-
 
         <div id="level_2" style="display: none">
             <h4>Select attributes:</h4>
