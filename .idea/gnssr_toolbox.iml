@@ -15,8 +15,10 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/virenv" />
+      <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/Data" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.8 (gnssr_toolbox)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.8 (GNSSR_Toolbox)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="chart.js" level="application" />
     <orderEntry type="library" name="jquery-3.6.0" level="application" />

@@ -1,12 +1,12 @@
 # This file collects the tracks from the CYGNSS opendap database, and stores lats, lon, nbrcs, timestamp and quality flags for each date.
 
-
+import os
 import datetime
 import numpy as np
 import time
 import pickle
 from pydap.client import open_url
-from opendap import generate_url
+from apps.toolbox.opendap import generate_url
 import calendar
 
 
@@ -62,10 +62,18 @@ for month in [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]:
         date = datetime.date(year, month, day+1)
         print(date)
 
+        folder_name = str(date.year) + '-' + str(date.month)
+        current = os.getcwd()
+
+        folder_path = current + '/../../../Data/' + folder_name
+
+        if not os.path.exists(folder_path):
+            os.mkdir(folder_path)
+
         nbrcs_track = collect_tracks(date)
 
-        file = open('D:/GNSS-R Data/Track_separation/' + str(date.year) + '-' + str('%02d' % date.month) + '/track_list' + str(
-            date.year) + '_' + date.strftime("%B").lower() + '_' + str(day + 1) + '.txt', 'wb')
+        file = open(folder_path + '/track_list' + str(date.year) + '_' + date.strftime("%B").lower() + '_' + str(day + 1) + '.txt', 'wb')
 
         pickle.dump(nbrcs_track, file)
         file.close()
+
