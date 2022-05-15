@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from kladding.realtime_gnssr.loadJSON import collect_sea_levels, collect_sea_roughness, collect_sat_info,\
      raw_measure_info, interferometric_fringe_info
-from kladding.realtime_gnssr.load_csv import get_cygnss_time_series, get_smap_time_series
+from kladding.realtime_gnssr.load_csv import get_cygnss_time_series, get_smap_time_series, convert_list_coordinates_to_dict, get_day_interval
 from .data_clipping import collect_level_2_data, collect_level_3_data, collect_level_1_data
 from .track_demonstration import collect_level_1_demo_data, collect_level_2_demo_data
 from .kladdings import *
@@ -33,20 +33,26 @@ def time_series_clipping(request):
             start_date = form.cleaned_data['start_date']
             end_date = form.cleaned_data['end_date']
 
-            cygnss_time_series = get_cygnss_time_series(0, 365, location)
-            smap_time_series = get_smap_time_series(0, 365, location)
+            print(start_date)
+            print(end_date)
 
-            return render(request, "toolbox/time_series.html", {'boundary': location,
+            labels = [i for i in range(get_day_interval(start_date, end_date))]
+
+            cygnss_time_series = get_cygnss_time_series(start_date, end_date, location)
+            smap_time_series = get_smap_time_series(start_date, end_date, location)
+
+            return render(request, "toolbox/time_series.html", {'area': location,
+                                                                'x_axis_date': start_date.strftime('%m/%d/%Y'),
                                                                 'cygnss_time_series': cygnss_time_series,
-                                                                'smap_time_series': smap_time_series})
-
+                                                                'smap_time_series': smap_time_series,
+                                                                'x_labels': labels})
         else:
             print(form.errors)
 
-        return render(request, "toolbox/time_series.html")
+        return render(request, "toolbox/ts_data_clipping.html", {'form': form})
 
 
-def time_series(request):
+# def time_series(request):
     """
     if request.method == 'POST':
         form = TrackDemoTool(request.POST)
@@ -66,7 +72,7 @@ def time_series(request):
         return 'hueiwhui'
         return render(request, "toolbox/track_demonstration.html", {'form': form, 'error_msg': error_message})
     """
-    return render(request, "toolbox/time_series.html")
+    # return render(request, "toolbox/time_series.html")
 
 
 def track_demonstration(request):

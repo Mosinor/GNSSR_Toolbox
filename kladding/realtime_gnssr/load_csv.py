@@ -12,15 +12,19 @@ def get_cygnss_time_series(start_date, end_date, region) -> list:
     # Include the possibility of varying the step size and the interval?
     # return list(cygnss_df['sr'])
 
-    return [random()*math.sin(i) for i in range(end_date - start_date)]
+    return [i*math.sin(i) for i in range(get_day_interval(start_date, end_date) + 1)]
 
 
 def get_smap_time_series(start_date, end_date, region) -> list:
-    return [random()*math.cos(i) for i in range(end_date - start_date)]
+    return [i*math.cos(i) for i in range(get_day_interval(start_date, end_date) + 1)]
 
 
 def filter_date(df, start_day, end_day, date_column_name='day_of_year') -> pd.DataFrame:
     return df[(df[date_column_name] >= start_day) & (df[date_column_name] <= end_day)]
+
+
+def get_day_interval(start_day, end_day):
+    return (end_day - start_day).days
 
 
 def filter_location(df, area) -> pd.DataFrame:
@@ -31,5 +35,4 @@ def filter_location(df, area) -> pd.DataFrame:
 
 
 def convert_list_coordinates_to_dict(coordinates) -> dict:
-    [max(lats), min(lons), min(lats), max(lons)]
     return {'north': coordinates[0], 'south': coordinates[2], 'west': coordinates[1], 'east': coordinates[3]}

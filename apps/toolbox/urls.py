@@ -5,7 +5,7 @@ app_name = 'toolbox'
 urlpatterns = [
     url(r'^DataClipping/$', data_clipping, name="data_clipping"),
     url(r'^TrackDemonstration/$', track_demonstration, name="track_demonstration"),
-    url(r'^TimeSeries/$', time_series, name="time_series"),
+    # url(r'^TimeSeries/$', time_series, name="time_series"),
 
     url(r'^TimeSeriesClipping/$', time_series_clipping, name="time_series_clipping"),
 
