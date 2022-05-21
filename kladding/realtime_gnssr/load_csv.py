@@ -1,6 +1,8 @@
 import pandas as pd
 from random import random
 import math
+import datetime
+
 
 def get_cygnss_time_series(start_date, end_date, region) -> list:
 
@@ -12,7 +14,23 @@ def get_cygnss_time_series(start_date, end_date, region) -> list:
     # Include the possibility of varying the step size and the interval?
     # return list(cygnss_df['sr'])
 
-    return [i*math.sin(i) for i in range(get_day_interval(start_date, end_date) + 1)]
+    area = {'north': region[0], 'south': region[2], 'west': region[1], 'east': region[3]}
+
+    base_path = '/Users/vegardhaneberg/Desktop/TimeSeriesProcessing/CYGNSS '
+    delta = datetime.timedelta(days=1)
+    cygnss_ts = []
+
+    while start_date <= end_date:
+        if start_date.year in [2019, 2020, 2021]:
+            path = base_path + str(start_date.year) + '/' + str(start_date.month) + '-' + str(start_date.day) + '.csv'
+            current_df = pd.read_csv(path)[['lat', 'long', 'sr']]
+            current_df = filter_location(current_df, area)
+
+            cygnss_ts.append(current_df['sr'].mean())
+
+        start_date += delta
+
+    return cygnss_ts
 
 
 def get_smap_time_series(start_date, end_date, region) -> list:
@@ -29,8 +47,8 @@ def get_day_interval(start_day, end_day):
 
 def filter_location(df, area) -> pd.DataFrame:
 
-    filtered_df = df[(df['lat'] <= area['south']) & (df['lat'] >= area['north'])]
-    filtered_df = filtered_df[(filtered_df['long'] <= area['west']) & (filtered_df['long'] >= area['east'])]
+    filtered_df = df[(df['lat'] <= area['north']) & (df['lat'] >= area['south'])]
+    filtered_df = filtered_df[(filtered_df['long'] <= area['east']) & (filtered_df['long'] >= area['west'])]
     return filtered_df
 
 

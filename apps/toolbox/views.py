@@ -33,13 +33,11 @@ def time_series_clipping(request):
             start_date = form.cleaned_data['start_date']
             end_date = form.cleaned_data['end_date']
 
-            print(start_date)
-            print(end_date)
-
             labels = [i for i in range(get_day_interval(start_date, end_date))]
 
             cygnss_time_series = get_cygnss_time_series(start_date, end_date, location)
             smap_time_series = get_smap_time_series(start_date, end_date, location)
+
 
             return render(request, "toolbox/time_series.html", {'area': location,
                                                                 'x_axis_date': start_date.strftime('%m/%d/%Y'),
@@ -50,29 +48,6 @@ def time_series_clipping(request):
             print(form.errors)
 
         return render(request, "toolbox/ts_data_clipping.html", {'form': form})
-
-
-# def time_series(request):
-    """
-    if request.method == 'POST':
-        form = TrackDemoTool(request.POST)
-        if form.is_valid():
-            coordinate_a = form.cleaned_data['coordinate_a']
-            coordinate_b = form.cleaned_data['coordinate_b']
-            lats = [float(coordinate_a.split(",")[0]), float(coordinate_b.split(",")[0])]
-            lons = [float(coordinate_a.split(",")[1]), float(coordinate_b.split(",")[1])]
-
-            location = [max(lats), min(lons), min(lats), max(lons)]
-
-            start_date = form.cleaned_data['start_date']
-            end_date = form.cleaned_data['end_date']
-
-            return render(request, "toolbox/time_series.html", {'boundary': location})
-    if request.method == 'GET':
-        return 'hueiwhui'
-        return render(request, "toolbox/track_demonstration.html", {'form': form, 'error_msg': error_message})
-    """
-    # return render(request, "toolbox/time_series.html")
 
 
 def track_demonstration(request):
