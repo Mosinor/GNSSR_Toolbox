@@ -16,7 +16,7 @@ def get_cygnss_time_series(start_date, end_date, region) -> list:
 
     area = {'north': region[0], 'south': region[2], 'west': region[1], 'east': region[3]}
 
-    base_path = '/Users/vegardhaneberg/Desktop/TimeSeriesProcessing/CYGNSS '
+    base_path = 'data/CYGNSS '
     delta = datetime.timedelta(days=1)
     cygnss_ts = []
 
