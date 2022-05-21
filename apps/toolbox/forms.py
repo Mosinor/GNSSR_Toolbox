@@ -139,3 +139,17 @@ class DataClippingTool(forms.Form):
         self.fields['keys_level2'].widget.attrs.update({'class': 'custom-multiple-select'})
         self.fields['keys_level3'].widget.attrs.update({'class': 'custom-multiple-select'})
 
+
+class TimeSeriesTool(forms.Form):
+    grid = forms.PolygonField(widget=LeafletWidget(), required=False)
+    coordinate_a = forms.CharField()
+    coordinate_b = forms.CharField()
+    start_date = forms.DateTimeField(widget=DateTimePickerInput().start_of('event days'))
+    end_date = forms.DateTimeField(widget=DateTimePickerInput().start_of('event days'))
+
+    def clean(self):
+        cleaned_data = super(TimeSeriesTool, self).clean()
+
+    def __init__(self, *args, **kwargs):
+        super(TimeSeriesTool, self).__init__(*args, **kwargs)
+
