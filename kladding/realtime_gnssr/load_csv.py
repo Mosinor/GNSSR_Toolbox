@@ -26,9 +26,6 @@ def get_cygnss_time_series(start_date, end_date, region) -> list:
 
     cygnss_ts = fill_missing_values(cygnss_ts)
 
-    if cygnss_ts is not None:
-        print('Length of cygnss ts:', len(cygnss_ts))
-
     return cygnss_ts
 
 
@@ -68,9 +65,6 @@ def get_smap_time_series(start_date, end_date, region) -> list:
         start_date += delta
 
     smap_ts = fill_missing_values(smap_ts)
-
-    if smap_ts is not None:
-        print('Length of SMAP time series:', len(smap_ts))
 
     return smap_ts
 
