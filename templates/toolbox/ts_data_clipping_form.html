@@ -7,8 +7,6 @@
         list-style-type:none;
         column-count: 3;
     }
-
-
 </style>
 
 <form method="post" novalidate>
@@ -23,7 +21,7 @@
         {% endfor %}
     </div>
 
-    <i style="text-align: center">Enter coordinates by using the square tool on the map or write them in the box [lat,lon]:</i> <br>
+    <i style="text-align: center">Enter coordinates by using the square tool on the map or write them in the box[lat,lon]:</i> <br>
     <br>
     <div class="row">
         <div class="input-group mb-3 date col-xs-12 col-sm-12 col-md-6 col-lg-6">
@@ -81,8 +79,15 @@
                 <p style="color: red">{{ error }}</p>
             {% endfor %}
         </div>
-
     </div>
+
+    <br>
+
+    {% if empty_data %}
+        <div style="text-align: center;">
+            <p style="color: darkred">The search did not match any results. Please select data over land between 2019 and 2021.</p>
+        </div>
+    {% endif %}
 
     <br>
 

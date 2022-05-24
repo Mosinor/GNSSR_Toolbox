@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.generic import View
+import numpy as np
 from .forms import *
 from datetime import timedelta
 from .opendap import generate_url, define_dataset_keys, collect_dataset, clock_to_seconds, filter_valid_points_time_specific_level1
@@ -18,7 +19,7 @@ def time_series_clipping(request):
 
     if request.method == 'GET':
         form = DataClippingTool()
-        return render(request, "toolbox/ts_data_clipping.html", {'form': form})
+        return render(request, "toolbox/ts_data_clipping.html", {'form': form, 'empty_data': False})
     else:
         form = TimeSeriesTool(request.POST)
 
@@ -38,16 +39,16 @@ def time_series_clipping(request):
             cygnss_time_series = get_cygnss_time_series(start_date, end_date, location)
             smap_time_series = get_smap_time_series(start_date, end_date, location)
 
-
-            return render(request, "toolbox/time_series.html", {'area': location,
-                                                                'x_axis_date': start_date.strftime('%m/%d/%Y'),
-                                                                'cygnss_time_series': cygnss_time_series,
-                                                                'smap_time_series': smap_time_series,
-                                                                'x_labels': labels})
+            if cygnss_time_series is not None and smap_time_series is not None and len(cygnss_time_series) > 0 and len(smap_time_series) > 0:
+                return render(request, "toolbox/time_series.html", {'area': location,
+                                                                    'x_axis_date': start_date.strftime('%m/%d/%Y'),
+                                                                    'cygnss_time_series': cygnss_time_series,
+                                                                    'smap_time_series': smap_time_series,
+                                                                    'labels': labels})
         else:
             print(form.errors)
 
-        return render(request, "toolbox/ts_data_clipping.html", {'form': form})
+        return render(request, "toolbox/ts_data_clipping.html", {'form': form, 'empty_data': True})
 
 
 def track_demonstration(request):
