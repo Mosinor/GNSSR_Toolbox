@@ -5,6 +5,7 @@ app_name = 'toolbox'
 urlpatterns = [
     url(r'^DataClipping/$', data_clipping, name="data_clipping"),
     url(r'^TrackDemonstration/$', track_demonstration, name="track_demonstration"),
+    url(r'^TimeSeriesClipping/$', time_series_clipping, name="time_series_clipping"),
 
     url(r'^example/$', HomeView.as_view(), name="example"),
     url(r'^groundbased/$', ground_based, name="ground_based"),

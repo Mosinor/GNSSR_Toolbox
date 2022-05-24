@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.generic import View
+import numpy as np
 from .forms import *
 from datetime import timedelta
 from .opendap import generate_url, define_dataset_keys, collect_dataset, clock_to_seconds, filter_valid_points_time_specific_level1
@@ -8,9 +9,46 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from kladding.realtime_gnssr.loadJSON import collect_sea_levels, collect_sea_roughness, collect_sat_info,\
      raw_measure_info, interferometric_fringe_info
+from kladding.realtime_gnssr.load_csv import get_cygnss_time_series, get_smap_time_series, convert_list_coordinates_to_dict, get_day_interval
 from .data_clipping import collect_level_2_data, collect_level_3_data, collect_level_1_data
 from .track_demonstration import collect_level_1_demo_data, collect_level_2_demo_data
 from .kladdings import *
+
+
+def time_series_clipping(request):
+
+    if request.method == 'GET':
+        form = DataClippingTool()
+        return render(request, "toolbox/ts_data_clipping.html", {'form': form, 'empty_data': False})
+    else:
+        form = TimeSeriesTool(request.POST)
+
+        if form.is_valid():
+            coordinate_a = form.cleaned_data['coordinate_a']
+            coordinate_b = form.cleaned_data['coordinate_b']
+            lats = [float(coordinate_a.split(",")[0]), float(coordinate_b.split(",")[0])]
+            lons = [float(coordinate_a.split(",")[1]), float(coordinate_b.split(",")[1])]
+
+            location = [max(lats), min(lons), min(lats), max(lons)]
+
+            start_date = form.cleaned_data['start_date']
+            end_date = form.cleaned_data['end_date']
+
+            labels = [i for i in range(get_day_interval(start_date, end_date))]
+
+            cygnss_time_series = get_cygnss_time_series(start_date, end_date, location)
+            smap_time_series = get_smap_time_series(start_date, end_date, location)
+
+            if cygnss_time_series is not None and smap_time_series is not None and len(cygnss_time_series) > 0 and len(smap_time_series) > 0:
+                return render(request, "toolbox/time_series.html", {'area': location,
+                                                                    'x_axis_date': start_date.strftime('%m/%d/%Y'),
+                                                                    'cygnss_time_series': cygnss_time_series,
+                                                                    'smap_time_series': smap_time_series,
+                                                                    'labels': labels})
+        else:
+            print(form.errors)
+
+        return render(request, "toolbox/ts_data_clipping.html", {'form': form, 'empty_data': True})
 
 
 def track_demonstration(request):

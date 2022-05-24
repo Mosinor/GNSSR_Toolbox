@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Time Series Data Clipping{% endblock %}
+
+{% block content %}
+
+    <div class="container clearfix">
+        <div class="jumbotron">
+            <h1>Time Series Data Clipping</h1>
+            <p>
+                Please select the area and the date range you want to create the time series for. Time series are available over land from 2019 until the end of 2021.
+            </p>
+
+            <hr>
+
+            {% include 'toolbox/ts_data_clipping_form.html' with empty_data=empty_data%}
+
+        </div>
+    </div> <!-- /container -->
+
+{% endblock content %}
+
+

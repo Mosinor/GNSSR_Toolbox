@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Time Series{% endblock %}
+
+{% block script %}
+<script>
+    var boundary = {{ area | safe }}
+    var cygnss_time_series = {{ cygnss_time_series|safe }}
+    var smap_time_series = {{ smap_time_series|safe }}
+    var labels = {{ labels|safe }}
+    var date = "{{ x_axis_date }}"
+
+    buildMap(boundary)
+
+    function buildMap(boundary) {
+        // Leaflet map
+        var map = L.map('mapid', {
+            preferCanvas: true,
+        });
+
+        southWest = L.latLng(boundary[2], boundary[1]);
+        northEast = L.latLng(boundary[0], boundary[3]);
+        bounds = L.latLngBounds(southWest, northEast);
+        map.setMaxBounds(bounds);
+
+        map.setView([boundary[0], boundary[3]], 15);
+
+        map.on('drag', function () {
+            map.panInsideBounds(bounds, {animate: false});
+        });
+
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            //noWrap: true,
+            //minZoom: 15,
+            //maxZoom: 19,
+        }).addTo(map);
+
+
+        var rectOptions = {color: 'Red', weight: 1, fillColor: '#1e209e', fillOpacity: 0.1}
+        var rectangle = L.rectangle(bounds, rectOptions)
+        map.fitBounds(rectangle.getBounds());
+
+        rectangle.addTo(map);
+
+    }
+
+    //function buildGraph(){
+    var ctx = document.getElementById("timeSeriesChart");
+
+    var myChart = new Chart(ctx, {
+        actions: [{
+            name: 'Toggle Lines',
+            handler(chart){
+                chart.data.datasets.forEach(dataset => {
+                    dataset.showLine = false;
+                });
+                chart.update();
+            }
+        }],
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    data: cygnss_time_series,
+                    label: "CYGNSS Surface Reflectivity",
+                    borderColor: "red",
+                    fill: false,
+                    yAxisID: 'left_axis',
+                    showLine: true,
+                },
+                {
+                    data: smap_time_series,
+                    label: 'SMAP Time Series',
+                    borderColor: "#3e95cd",
+                    fill: false,
+                    yAxisID: 'right_axis',
+                    showLine: true,
+                }
+            ]},
+            options: {
+            responsive: true,
+                scales: {
+                  xAxes:[{
+                      scaleLabel: {
+                          display: true,
+                          labelString: "Day After " + date,
+                          fontStyle: "bold",
+                      }
+                  }],
+                  yAxes: [{
+                      id: 'left_axis',
+                      type: 'linear',
+                      position: 'left',
+                      ticks: {
+                          fontColor: "red",
+                      },
+                      scaleLabel: {
+                          display: true,
+                          labelString: "CYGNSS SR [dB]",
+                          fontStyle: "bold",
+                      }
+                  },{
+                        id: 'right_axis',
+                        type: 'linear',
+                        position: 'right',
+                        gridLines: {
+                        display: false,
+                    },
+                      ticks: {
+                            fontColor: '#3e95cd'
+                      },
+                      scaleLabel: {
+                          display: true,
+                          labelString: "SMAP SM [cm^3/cm^3]",
+                          fontStyle: "bold",
+                      }
+                  }]
+              }
+              },
+        });
+    // }
+
+    $("#toggle_lines_button").click(function() {
+        var chartLine = myChart;
+        chartLine.data.datasets[0].showLine = !chartLine.data.datasets[0].showLine;
+        chartLine.data.datasets[1].showLine = !chartLine.data.datasets[1].showLine;
+        chartLine.update();
+        var btn = document.getElementById("toggle_lines_button");
+        if (btn.innerHTML == "Show Lines"){
+            btn.innerHTML = "Remove Lines";
+        }
+        else {
+            btn.innerHTML = "Show Lines";
+        }
+    });
+
+    // buildGraph()
+
+</script>
+
+{% endblock script %}
+
+
+{% block content %}
+    <div class="container clearfix">
+        <div class="jumbotron">
+            <h1>Time Series</h1>
+
+            <div>
+                <div style="height: 300px" id="mapid"></div>
+            </div>
+
+            <br>
+
+            <div class="chartDiv">
+                <canvas id="timeSeriesChart" width="941" height="500"></canvas>
+            </div>
+            <br>
+            <div style="text-align: center;">
+                <button id="toggle_lines_button" type="button" class="btn btn-secondary">Remove Lines</button>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

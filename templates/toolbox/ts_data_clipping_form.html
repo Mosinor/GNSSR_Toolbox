@@ -1,0 +1,195 @@
+{% load leaflet_tags %}
+{% leaflet_js plugins="forms" %}
+{% leaflet_css plugins="forms" %}
+
+<style>
+    .custom-multiple-select{
+        list-style-type:none;
+        column-count: 3;
+    }
+</style>
+
+<form method="post" novalidate>
+    {{ form.media }}
+    {% csrf_token %}
+    <div>
+        <h4>Selection Area:</h4>
+        <br>
+        {{ form.grid }}
+        {% for error in form.grid.errors %}
+            <p style="color: #ff0000">{{ error }}</p>
+        {% endfor %}
+    </div>
+
+    <i style="text-align: center">Enter coordinates by using the square tool on the map or write them in the box[lat,lon]:</i> <br>
+    <br>
+    <div class="row">
+        <div class="input-group mb-3 date col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default"><b>Top Right</b></span>
+            </div>
+            <input id="coordinate_a" name="coordinate_a" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+        {% if form.coordinate_a.help_text %}
+            <small class="form-text text-muted">{{ form.coordinate_a.help_text }}</small>
+        {% endif %}
+        {% for error in form.coordinate_a.errors %}
+            <p style="color: red">{{ error }}</p>
+        {% endfor %}
+
+
+        <div class="input-group mb-3 date col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default"><b>Bottom Left</b></span>
+            </div>
+            <input id="coordinate_b" name="coordinate_b" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+        {% if form.coordinate_b.help_text %}
+            <small class="form-text text-muted">{{ form.coordinate_b.help_text }}</small>
+        {% endif %}
+        {% for error in form.coordinate_b.errors %}
+            <p style="color: red">{{ error }}</p>
+        {% endfor %}
+    </div>
+
+    <hr>
+    <div class="row">
+
+        <div class='input-group date col-xs-12 col-sm-12 col-md-6 col-lg-6' id='datetimepicker6'>
+            <h4>Start date and time:</h4>
+                <br>
+                {{ form.start_date }}
+                {% if form.date.help_text %}
+                    <small class="form-text text-muted">{{ form.date.help_text }}</small>
+                {% endif %}
+                {% for error in form.start_date.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
+        </div>
+
+
+        <div class='input-group date col-xs-12 col-sm-12 col-md-6 col-lg-6' id='datetimepicker6'>
+            <h4>End  date and time:</h4>
+            <br>
+            {{ form.end_date }}
+            {% if form.end_date.help_text %}
+                <small class="form-text text-muted">{{ form.end_date.help_text }}</small>
+            {% endif %}
+            {% for error in form.end_date.errors %}
+                <p style="color: red">{{ error }}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <br>
+
+    {% if empty_data %}
+        <div style="text-align: center;">
+            <p style="color: darkred">The search did not match any results. Please select data over land between 2019 and 2021.</p>
+        </div>
+    {% endif %}
+
+    <br>
+
+    <div style="text-align: center;">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+
+{% block script %}
+    <script>
+        //$('#id_keys_level1').multiselect();
+
+        $("#level_1").show();
+
+        $('#id_level').change(function() {
+            if ($(this).val() === "1") {
+                $("#level_1").show();
+                $("#level_2").hide();
+                $("#level_3").hide();
+            } else if ($(this).val() === "2") {
+                $("#level_1").hide();
+                $("#level_2").show();
+                $("#level_3").hide();
+            } else if ($(this).val() === "3") {
+                $("#level_1").hide();
+                $("#level_2").hide();
+                $("#level_3").show();
+            }
+        })
+
+
+        var southWest = L.latLng(-45, -180),
+        northEast = L.latLng(45, 180),
+        bounds = L.latLngBounds(southWest, northEast);
+
+
+        var map = L.map('id_grid-map', {
+            noWrap: true,
+            maxBounds: bounds,
+            maxZoom: 19,
+            minZoom: 3
+
+
+        }).setView([0, 0], 1);
+
+        const drawControl = new L.Control.Draw({
+                 draw: {polygon: false,
+                 polyline: false,
+                 marker: false,
+                 circle: false,
+                 rectangle: true}
+         });
+
+
+
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+          noWrap: true,
+          bounds: [
+            [-45, -180],
+            [45, 180]
+          ]
+        }).addTo(map);
+
+        var northBoundary = [
+            [45, -180],
+            [45, 180]
+        ];
+
+        var southBoundary = [
+            [-45, -180],
+            [-45, 180]
+        ];
+
+        L.polyline(northBoundary, {color: 'red'}).addTo(map);
+        L.polyline(southBoundary, {color: 'red'}).addTo(map);
+
+
+        this.map.addControl(drawControl)
+
+        this.map.on('draw:created', (e) => {
+            var bounds = [e.layer._bounds._northEast, e.layer._bounds._southWest]
+
+            CreateRectangle(bounds);
+
+        })
+
+        var rect;
+
+        function CreateRectangle(bounds){
+
+            document.getElementById("coordinate_a").value = bounds[0].lat+","+bounds[0].lng;
+            document.getElementById("coordinate_b").value = bounds[1].lat+","+bounds[1].lng;
+
+
+            if(rect)
+            {
+                map.removeLayer(rect); // remove the old rectangle...
+            }
+
+            rect = L.rectangle(bounds, {color: 'blue', weight: 1}).addTo(map);
+
+        }
+
+    </script>
+{% endblock %}
