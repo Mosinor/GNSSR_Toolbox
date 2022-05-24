@@ -77,7 +77,7 @@ gdal-config --version
 ## Data used
 * [NASA - CYGNSS](https://podaac.jpl.nasa.gov/CYGNSS) - Reflectometry data
 
-## Author
+## Authors
 
 * **Andreas G. Strand** - [Strand94](https://github.com/Strand94)
 * **Vegard Haneberg** - [vegardhaneberg](https://github.com/vegardhaneberg)
