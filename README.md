@@ -70,6 +70,11 @@ Please replace X.X.X with your installed version of Gdal. You can find the versi
 ```
 gdal-config --version 
 ```
+If you experience issues with the basemap installation using pip, try a conda environment and install by running the following command:
+```
+conda install -c anaconda basemap
+```
+
 ## Built With
 
 * [Django](https://www.djangoproject.com/) - The web framework used
