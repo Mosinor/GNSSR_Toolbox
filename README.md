@@ -2,6 +2,7 @@
 
 The GNSSR-Toolbox is a prototype tool for the collection and processing of Global Navigation Sattelite System Reflectometry data. This website was created in accordance with a master thesis at the Norwegian university NTNU. 
 
+![Overview](static/Overview.png)
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
