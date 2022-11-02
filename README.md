@@ -85,8 +85,8 @@ conda install -c anaconda basemap
 
 ## Authors
 
-* **Andreas G. Strand** - [Strand94](https://github.com/Strand94)
 * **Vegard Haneberg** - [vegardhaneberg](https://github.com/vegardhaneberg)
+* **Andreas G. Strand** - [Strand94](https://github.com/Strand94)
 
 ## License
 
