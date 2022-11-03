@@ -12,9 +12,11 @@
             </p>
 
             <div class="row">
-              <div class="col-sm-4">
+              <div class="col-6 col-md-4">
                   <div class="card" style="width: 18rem; align-items: center;">
-                      <img src="{% static "timeSeries.png" %}" class="card-img-top" style="width: 11rem;" >
+                      <a href="{% url 'toolbox:time_series_clipping' %}">
+                          <img src="{% static "timeSeries.png" %}" class="card-img-top" style="width: 11rem;" >
+                      </a>
                       <div class="card-body">
                         <h5 class="card-title">Time Series Analysis</h5>
                         <p class="card-text">Select an area and time span and we calculate time series for you!</p>
@@ -22,9 +24,11 @@
                       <a href="{% url 'toolbox:time_series_clipping' %}" class="btn btn-primary stretched-link" style="margin-bottom: 1rem;">Try it</a>
                   </div>
               </div>
-              <div class="col-sm-4">
+              <div class="col-6 col-md-4">
                   <div class="card" style="width: 18rem; align-items: center; margin-right: 2rem;">
-                      <img src="{% static "sat.jpeg" %}" class="card-img-top" style="width: 11rem;" >
+                      <a href="{% url 'toolbox:track_demonstration' %}">
+                          <img src="{% static "sat.jpeg" %}" class="card-img-top" style="width: 11rem;" >
+                      </a>
                       <div class="card-body">
                         <h5 class="card-title">Track Demonstration Tool</h5>
                         <p class="card-text">Demonstrate the most recent CYGNSS satellite tracks</p>
@@ -32,9 +36,11 @@
                       <a href="{% url 'toolbox:track_demonstration' %}" class="btn btn-primary stretched-link" style="margin-bottom: 1rem;">Try it</a>
                   </div>
               </div>
-                <div class="col-sm-4">
+                <div class="col-6 col-md-4">
                   <div class="card" style="width: 18rem; align-items: center;">
-                      <img src="{% static "coast.png" %}" class="card-img-top" style="width: 11rem;" >
+                      <a href="{% url 'toolbox:ground_based' %}">
+                        <img src="{% static "coast.png" %}" class="card-img-top" style="width: 11rem;" >
+                      </a>
                       <div class="card-body">
                         <h5 class="card-title">Ground-based GNSS-R</h5>
                         <p class="card-text">GNSS-R used from a ground based station</p>
@@ -47,7 +53,9 @@
             <div class="row" style="margin-top: 3rem;">
                 <div class="col-sm-4">
                   <div class="card" style="width: 18rem; align-items: center;">
-                      <img src="{% static "down.webp" %}" class="card-img-top" style="width: 9rem; margin: 1.3rem;" >
+                      <a href="{% url 'toolbox:data_clipping' %}">
+                        <img src="{% static "down.webp" %}" class="card-img-top" style="width: 9rem; margin: 1.3rem;" >
+                      </a>
                       <div class="card-body">
                         <h5 class="card-title">Data Clipping Tool</h5>
                         <p class="card-text">Simplified CYGNSS download process</p>
